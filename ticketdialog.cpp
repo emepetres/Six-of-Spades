@@ -120,11 +120,11 @@ QString TicketDialog::writeTicket()
 
     float percent;
     for (int i=0; i<usersNumber && isnumber; i++) {
-        if (usersCheckBoxes[i]->isChecked() && usersCheckBoxes[i]->text().compare("equal")!=0)
+        if (usersCheckBoxes[i]->isChecked() && percentages[i]->text().compare("igual")!=0)
         {
             percent = percentages[i]->text().toFloat(&isnumber);
             isnumber = isnumber && percent > 0 && percent < 100;
-            if (!isnumber) return "El porcentaje " + QString::number(i+1) + "no es válido";
+            if (!isnumber) return "El porcentaje " + QString::number(i+1) + trUtf8(" no es válido");
         }
     }
 
@@ -145,16 +145,24 @@ QString TicketDialog::writeTicket()
 
 
     //write the contributors of the ticket
+    QString percentage;
     for (int i=0; i<usersNumber && validQuery; i++) {
         if (usersCheckBoxes[i]->isChecked()) {
+            if (percentages[i]->text().compare("igual")==0) percentage = "0";
+            else percentage = percentages[i]->text();
+
             validQuery = validQuery && query.exec ("insert into ticket_user (idTicket, user, percent) VALUES ("+
                                            QString::number(ticketId) + ", '"+
-                                           usersCheckBoxes[i]->text() + "'', " +
-                                           percentages[i]->text() +");");
+                                           usersCheckBoxes[i]->text() + "', " +
+                                           percentage +");");
         }
     }
 
-    if (!validQuery) return "Datos de compañer@s de ticket no válidos.";
+    if (!validQuery) //delete the new ticket and return the error message
+    {
+        query.exec ("delete from ticket where id="+QString::number(ticketId));
+        return trUtf8("Datos de compañer@s de ticket no válidos.");
+    }
     else return "";
 
 }

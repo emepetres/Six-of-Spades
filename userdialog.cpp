@@ -27,7 +27,11 @@ bool UserDialog::addUser()
         bool validQuery = query.exec ("insert into user (user, passwd) VALUES ('"+
                                       ui->newUser->text() +"', '-');");
         if (validQuery) { accept(); return true; }
-        else return false;
+        else
+        {
+            ui->errorLabel->setText(trUtf8("El usuario ya existe o no es válido"));
+            return false;
+        }
     }
     else
     {

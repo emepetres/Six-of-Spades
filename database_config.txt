@@ -20,8 +20,7 @@ CREATE TABLE `seisdepicas`.`ticket` (
     ON UPDATE CASCADE
 )
 ENGINE = InnoDB;
-CHARACTER SET utf8 COLLATE utf8_general_ci
-COMMENT = 'representa un nuevo ticket de compra';
+CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE `seisdepicas`.`ticket_user` (
   `idTicket` INT UNSIGNED NOT NULL,
@@ -38,3 +37,4 @@ CREATE TABLE `seisdepicas`.`ticket_user` (
     ON UPDATE CASCADE
 )
 ENGINE = InnoDB;
+CHARACTER SET utf8 COLLATE utf8_general_ci;

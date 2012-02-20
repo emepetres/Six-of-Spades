@@ -7,7 +7,7 @@
 QT       += core gui\
             sql
 
-TARGET = six_of_spades
+TARGET = Six-of-Spades
 TEMPLATE = app
 
 

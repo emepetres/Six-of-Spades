@@ -15,10 +15,13 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="0" column="0" rowspan="3">
      <widget class="QTableView" name="ticketsTable">
       <property name="alternatingRowColors">
        <bool>true</bool>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
       </property>
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectRows</enum>
@@ -29,6 +32,26 @@
      <widget class="QPushButton" name="pushButton">
       <property name="text">
        <string>Añadir</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QPushButton" name="remove_Button">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Eliminar</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="edit_Button">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Editar</string>
       </property>
      </widget>
     </item>
@@ -94,17 +117,68 @@
    <slot>addTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>769</x>
-     <y>97</y>
+     <x>830</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>737</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>edit_Button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editTicket()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>783</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>605</x>
+     <y>158</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ticketsTable</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>enableButtons()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>326</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>371</x>
+     <y>156</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>remove_Button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>deleteTicket()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>812</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel">
      <x>804</x>
-     <y>186</y>
+     <y>157</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
   <slot>addTicket()</slot>
+  <slot>editTicket()</slot>
+  <slot>enableButtons()</slot>
+  <slot>deleteTicket()</slot>
  </slots>
 </ui>

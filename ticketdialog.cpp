@@ -3,12 +3,64 @@
 #include "ui_ticketdialog.h"
 #include "qgridlayout.h"
 
-TicketDialog::TicketDialog(QWidget *parent, QSqlQueryModel *userModel) :
+TicketDialog::TicketDialog(QSqlQueryModel *userModel, QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::TicketDialog)
+{
+    ui->setupUi(this);
+    organizeDialog(userModel);
+
+    //write the add new ticket buttons
+    if (usersNumber>0) {
+        ((QGridLayout *)layout())->addWidget(ui->cancel_Button, usersNumber+5, 1);
+        ((QGridLayout *)layout())->addWidget(ui->add_Button, usersNumber+5, 2);
+        ((QGridLayout *)layout())->addWidget(ui->addMore_Button, usersNumber+5, 3);
+    }
+}
+
+TicketDialog::TicketDialog(QSqlQueryModel *userModel, QItemSelectionModel *ticketSelectionModel, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TicketDialog)
 {
     ui->setupUi(this);
 
+    if (organizeDialog(userModel)) { //if the widget organization has success (users > 0)
+        //write the edit buttons
+        ((QGridLayout *)layout())->addWidget(ui->cancel_Button, usersNumber+5, 2);
+        ui->add_Button->setText("Editar");
+        ((QGridLayout *)layout())->addWidget(ui->add_Button, usersNumber+5, 3);
+        ui->addMore_Button->hide();
+        //TODO: PROVISIONAL
+        ui->add_Button->setEnabled(false);
+
+        //get the fields of the ticket to edit
+        QModelIndexList ticketIndexes = ticketSelectionModel->selectedIndexes();
+        const QAbstractItemModel *ticketModel = ticketSelectionModel->model();
+
+        int id = ticketModel->data(ticketIndexes.at(0)).toInt();
+        QDate payed = ticketModel->data(ticketIndexes.at(1)).toDate();
+        QString user = ticketModel->data(ticketIndexes.at(2)).toString();
+        QString concept = ticketModel->data(ticketIndexes.at(3)).toString();
+        float amount = ticketModel->data(ticketIndexes.at(4)).toFloat();
+
+
+        //write the fields of the dialog with the information to edit
+        ui->comboBox->setCurrentIndex(ui->comboBox->findText(user));
+        ui->conceptLineEdit->setText(concept);
+        ui->costLineEdit->setText(QString::number(amount));
+        ui->dateEdit->setDate(payed);
+    }
+}
+
+TicketDialog::~TicketDialog()
+{
+    delete ui;
+    usersCheckBoxes.clear();
+    percentages.clear();
+}
+
+bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
+{
     ui->comboBox->setModel(userModel);
     ui->comboBox->setModelColumn(0);
     ui->dateEdit->setDate(QDate::currentDate());
@@ -35,6 +87,8 @@ TicketDialog::TicketDialog(QWidget *parent, QSqlQueryModel *userModel) :
 
         ui->add_Button->hide();
         ui->addMore_Button->hide();
+
+        return false;
     }
     else
     {
@@ -56,20 +110,11 @@ TicketDialog::TicketDialog(QWidget *parent, QSqlQueryModel *userModel) :
             gridLayout->addWidget(percent, i+4, 3);
         }
 
-        //finally add the buttons and error label
+        //finally add error label
         gridLayout->addWidget(ui->errorLabel, usersNumber+4, 0, 1, 4);
-        gridLayout->addWidget(ui->cancel_Button, usersNumber+5, 1);
-        gridLayout->addWidget(ui->add_Button, usersNumber+5, 2);
-        gridLayout->addWidget(ui->addMore_Button, usersNumber+5, 3);
+
+        return true;
     }
-
-}
-
-TicketDialog::~TicketDialog()
-{
-    delete ui;
-    usersCheckBoxes.clear();
-    percentages.clear();
 }
 
 bool TicketDialog::addTicket()

@@ -17,7 +17,8 @@ class TicketDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TicketDialog(QWidget *parent = 0, QSqlQueryModel *userModel = 0);
+    explicit TicketDialog(QSqlQueryModel *userModel, QWidget *parent = 0);
+    TicketDialog(QSqlQueryModel *userModel, QItemSelectionModel *ticketModel, QWidget *parent = 0 );
     ~TicketDialog();
 
 public slots:
@@ -30,6 +31,7 @@ private:
     int usersNumber;
 
     Ui::TicketDialog *ui;
+    bool organizeDialog(QSqlQueryModel *userModel);
     QString writeTicket();
 
 };

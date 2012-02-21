@@ -96,16 +96,6 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2">
-    <widget class="QCheckBox" name="checkBox">
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="text">
-      <string>Pagado</string>
-     </property>
-    </widget>
-   </item>
    <item row="4" column="1">
     <widget class="QPushButton" name="cancel_Button">
      <property name="text">
@@ -194,8 +184,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>129</x>
-     <y>247</y>
+     <x>223</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
      <x>43</x>
@@ -210,8 +200,8 @@
    <slot>addTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>253</x>
-     <y>242</y>
+     <x>314</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
      <x>155</x>
@@ -226,8 +216,8 @@
    <slot>addMoreTickets()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>386</x>
-     <y>242</y>
+     <x>421</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
      <x>330</x>

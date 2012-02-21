@@ -71,14 +71,14 @@ bool MainWindow::getTickets()
     if (connectDB())
     {
         QSqlQueryModel *ticketsTableModel = new QSqlQueryModel;
-        ticketsTableModel->setQuery("SELECT * FROM ticket LIMIT 0,50;");
+        ticketsTableModel->setQuery("SELECT id, payed, user, concept, amount, created FROM ticket LIMIT 0,50;");
 
         ticketsTableModel->setHeaderData(0, Qt::Horizontal, "ID");
-        ticketsTableModel->setHeaderData(1, Qt::Horizontal, "Concepto");
-        ticketsTableModel->setHeaderData(2, Qt::Horizontal, "Creado");
-        ticketsTableModel->setHeaderData(3, Qt::Horizontal, "Pagado");
+        ticketsTableModel->setHeaderData(1, Qt::Horizontal, "Pagado el");
+        ticketsTableModel->setHeaderData(2, Qt::Horizontal, "Por");
+        ticketsTableModel->setHeaderData(3, Qt::Horizontal, "Concepto");
         ticketsTableModel->setHeaderData(4, Qt::Horizontal, "Cantidad");
-        ticketsTableModel->setHeaderData(5, Qt::Horizontal, "Por");
+        ticketsTableModel->setHeaderData(5, Qt::Horizontal, "Modificado el");
 
         ui->ticketsTable->setModel(ticketsTableModel);
         ui->ticketsTable->resizeColumnsToContents();
@@ -89,14 +89,15 @@ bool MainWindow::getTickets()
     else return false;
 }
 
+//Button slots
 bool MainWindow::addTicket()
 {
+    //get users
     QSqlQueryModel userNameModel;
-
     if (connectDB()) userNameModel.setQuery("SELECT user FROM user;");
     else return false;
 
-    TicketDialog td(this, &userNameModel);
+    TicketDialog td(&userNameModel, this);
     td.exec();
 
     getTickets();
@@ -104,6 +105,49 @@ bool MainWindow::addTicket()
     return true;
 }
 
+bool MainWindow::editTicket()
+{
+    //get users
+    QSqlQueryModel userNameModel;
+    if (connectDB()) userNameModel.setQuery("SELECT user FROM user;");
+    else return false;
+
+    //create the dialog with edit information
+    TicketDialog td(&userNameModel, ui->ticketsTable->selectionModel(), this);
+    td.exec();
+
+    getTickets();
+
+    return true;
+}
+
+bool MainWindow::deleteTicket()
+{
+    QModelIndexList ticketIndexes = ui->ticketsTable->selectionModel()->selectedIndexes();
+    const QAbstractItemModel *ticketModel = ui->ticketsTable->model();
+
+    int id = ticketModel->data(ticketIndexes.at(0)).toInt();
+
+    QSqlQuery query;
+    bool validQuery = query.exec ("delete from ticket where id="+QString::number(id));
+
+    getTickets();
+
+    return validQuery;
+}
+
+bool MainWindow::enableButtons()
+{
+    //enable edit and remove buttons if we have a selection on ticketsTable
+    bool enable = ui->ticketsTable->selectionModel()->hasSelection();
+    ui->edit_Button->setEnabled(enable);
+    ui->remove_Button->setEnabled(enable);
+
+    return enable;
+}
+
+
+//Menu bar slots
 void MainWindow::on_actionAddBuddy_triggered()
 {
     QSqlQueryModel userNameModel;

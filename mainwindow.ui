@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Seis de Picas</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0">
@@ -34,13 +34,6 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Tickets:</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="3">
      <widget class="QLabel" name="label_3">
       <property name="text">
@@ -59,7 +52,14 @@
      </widget>
     </item>
     <item row="0" column="4">
-     <widget class="QDateEdit" name="endTicketDate"/>
+     <widget class="QDateEdit" name="endTicketDate">
+      <property name="displayFormat">
+       <string>d/M/yy</string>
+      </property>
+      <property name="calendarPopup">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item row="5" column="4">
      <widget class="QPushButton" name="pushButton">
@@ -116,6 +116,26 @@
      <widget class="QPushButton" name="pushButton_4">
       <property name="text">
        <string>Guardar y Eliminar Tickets</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="5">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Tickets:</string>
       </property>
      </widget>
     </item>
@@ -181,11 +201,11 @@
    <slot>addTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>830</x>
-     <y>77</y>
+     <x>481</x>
+     <y>224</y>
     </hint>
     <hint type="destinationlabel">
-     <x>737</x>
+     <x>542</x>
      <y>46</y>
     </hint>
    </hints>
@@ -197,11 +217,11 @@
    <slot>editTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>783</x>
-     <y>104</y>
+     <x>434</x>
+     <y>249</y>
     </hint>
     <hint type="destinationlabel">
-     <x>605</x>
+     <x>542</x>
      <y>158</y>
     </hint>
    </hints>
@@ -214,7 +234,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>326</x>
-     <y>137</y>
+     <y>285</y>
     </hint>
     <hint type="destinationlabel">
      <x>371</x>
@@ -229,12 +249,28 @@
    <slot>deleteTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>812</x>
-     <y>136</y>
+     <x>463</x>
+     <y>279</y>
     </hint>
     <hint type="destinationlabel">
-     <x>804</x>
+     <x>542</x>
      <y>157</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>calculateButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>calculeBill()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>17</x>
+     <y>79</y>
     </hint>
    </hints>
   </connection>
@@ -244,5 +280,6 @@
   <slot>editTicket()</slot>
   <slot>enableButtons()</slot>
   <slot>deleteTicket()</slot>
+  <slot>calculeBill()</slot>
  </slots>
 </ui>

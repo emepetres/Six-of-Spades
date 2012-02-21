@@ -21,6 +21,7 @@ private slots:
     bool editTicket();
     bool deleteTicket();
     bool enableButtons();
+    bool calculeBill();
     void on_actionAddBuddy_triggered();
 
 private:

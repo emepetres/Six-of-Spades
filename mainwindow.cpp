@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //organize the window
+    ui->endTicketDate->setDate(QDate::currentDate());
+
     getTickets();
 }
 
@@ -134,6 +137,36 @@ bool MainWindow::deleteTicket()
     getTickets();
 
     return validQuery;
+}
+
+bool MainWindow::calculeBill()
+{
+    //SELECT idTicket, ticket.user, amount, ticket_user.user, percent FROM ticket, ticket_user WHERE id = idTicket AND payed>='2012-01-05' AND payed<='2012-02-13' ORDER BY idTicket ASC;
+
+    QSqlQuery query;
+    query.setForwardOnly(true);
+
+    if (connectDB()) query.exec("SELECT idTicket, ticket.user, amount, ticket_user.user, percent FROM ticket, ticket_user WHERE id = idTicket AND payed>='" +
+                                            ui->startTicketDate->date().toString("yyyy-MM-dd") + "' AND payed<='" +
+                                            ui->endTicketDate->date().toString("yyyy-MM-dd") + "' ORDER BY idTicket ASC;");
+    else return false;
+
+
+    int id, last_id = -1;
+    QString user, contributor;
+    float cost, percent;
+    while (query.next()) {
+        int id = query.value(0).toInt();
+
+        user = query.value(1).toString();
+        cost = query.value(2).toFloat();
+
+        contributor = query.value(3).toString();
+        percent = query.value(4).toFloat();
+
+    }
+
+    return true;
 }
 
 bool MainWindow::enableButtons()

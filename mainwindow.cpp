@@ -5,6 +5,7 @@
 
 #include <QMessageBox>
 #include <QtSql/QSqlError>
+#include <QStandardItem>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -151,20 +152,74 @@ bool MainWindow::calculeBill()
                                             ui->endTicketDate->date().toString("yyyy-MM-dd") + "' ORDER BY idTicket ASC;");
     else return false;
 
+    //bill data
+    QMap<QString, float> bill;
 
     int id, last_id = -1;
     QString user, contributor;
     float cost, percent;
-    while (query.next()) {
-        int id = query.value(0).toInt();
+    vector <QString> contributors;
+    vector <float> contributorsPercentages;
+    float percentAccum = 0;
+    int contributorsNotEqual = 0;
+    bool thereAreMore = true;
+    while (query.size()) {
+        thereAreMore = query.next();
 
-        user = query.value(1).toString();
-        cost = query.value(2).toFloat();
+        if (thereAreMore) id = query.value(0).toInt();
+        else id = -1;
 
-        contributor = query.value(3).toString();
-        percent = query.value(4).toFloat();
+        if (id != last_id)
+        {
+            if (last_id>=0)
+            {
+                //if it is not first time, update the bill with the ticket
+                if (contributorsNotEqual==0) {
+                    float percentMoney = cost / contributors.size();
+                    for (int i=0; i<contributors.size(); i++) {
+                        bill[contributors[i]] = bill[contributors[i]] - percentMoney;
+                    }
+                    bill[user] = bill[user] + cost;
+                }
+                else
+                {
+                    float percentMoney = cost*(100.0 - percentAccum)/(contributors.size() - contributorsNotEqual)/100.0;
+                    for (int i=0; i<contributors.size(); i++) {
+                        if (contributorsPercentages[i]>0)
+                            bill[contributors[i]] = bill[contributors[i]] - cost*contributorsPercentages[i]/100.0;
+                        else bill[contributors[i]] = bill[contributors[i]] - percentMoney;
+                    }
+                    bill[user] = bill[user] + cost;
+                }
+            }
+            if (!thereAreMore) break;
 
+            user = query.value(1).toString();
+            cost = query.value(2).toFloat();
+            last_id = id;
+
+            contributors.clear();
+            contributorsPercentages.clear();
+            contributorsNotEqual = 0;
+            percentAccum = 0;
+        }
+
+        //read and save the contributor information
+        contributors.push_back(query.value(3).toString());
+        contributorsPercentages.push_back(query.value(4).toFloat());
+        if (query.value(4).toFloat()>0)
+        {
+            contributorsNotEqual++;
+            percentAccum = percentAccum + query.value(4).toFloat();
+        }
     }
+
+    QString billText;
+    QMap<QString, float>::iterator it;
+    for (it = bill.begin(); it != bill.end(); ++it)
+        billText = billText + it.key() + QString(": ") + QString::number(it.value()) + QString("\n");
+
+    ui->billTextBox->setText(billText);
 
     return true;
 }

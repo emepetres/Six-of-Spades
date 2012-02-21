@@ -102,11 +102,11 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0" rowspan="2" colspan="4">
-     <widget class="QColumnView" name="columnView"/>
-    </item>
     <item row="1" column="4">
      <widget class="QPushButton" name="pushButton_3">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Guardar</string>
       </property>
@@ -114,6 +114,9 @@
     </item>
     <item row="2" column="4">
      <widget class="QPushButton" name="pushButton_4">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Guardar y Eliminar Tickets</string>
       </property>
@@ -136,6 +139,13 @@
      <widget class="QLabel" name="label">
       <property name="text">
        <string>Tickets:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" rowspan="2" colspan="4">
+     <widget class="QTextEdit" name="billTextBox">
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>

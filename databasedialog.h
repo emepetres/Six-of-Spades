@@ -1,0 +1,27 @@
+#ifndef DATABASEDIALOG_H
+#define DATABASEDIALOG_H
+
+#include "configuration.h"
+#include <QDialog>
+
+namespace Ui {
+    class DatabaseDialog;
+}
+
+class DatabaseDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    explicit DatabaseDialog(Configuration *config, QWidget *parent = 0);
+    ~DatabaseDialog();
+
+public slots:
+    bool saveProperties();
+
+private:
+    Ui::DatabaseDialog *ui;
+    Configuration *config;
+};
+
+#endif // DATABASEDIALOG_H

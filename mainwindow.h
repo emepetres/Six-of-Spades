@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <configuration.h>
 #include <QMainWindow>
 #include <QtSql/QSqlDatabase>
 
@@ -13,6 +14,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    Configuration *config;
+
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
@@ -24,9 +27,11 @@ private slots:
     bool calculeBill();
     void on_actionAddBuddy_triggered();
 
+    void on_actionConfigurar_BBDD_triggered();
+
 private:
     Ui::MainWindow *ui;
-    QSqlDatabase db;
+    QSqlDatabase *db;
 
     bool connectDB();
     bool getTickets();

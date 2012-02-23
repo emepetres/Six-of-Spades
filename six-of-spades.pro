@@ -14,15 +14,20 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     ticketdialog.cpp \
-    userdialog.cpp
+    userdialog.cpp \
+    configuration.cpp \
+    databasedialog.cpp
 
 HEADERS  += mainwindow.h \
     ticketdialog.h \
-    userdialog.h
+    userdialog.h \
+    configuration.h \
+    databasedialog.h
 
 FORMS    += mainwindow.ui \
     ticketdialog.ui \
-    userdialog.ui
+    userdialog.ui \
+    databasedialog.ui
 
 OTHER_FILES += \
     database_config.txt

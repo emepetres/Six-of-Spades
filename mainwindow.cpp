@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "ticketdialog.h"
 #include "userdialog.h"
+#include "configuration.h"
+#include "databasedialog.h"
 
 #include <QMessageBox>
 #include <QtSql/QSqlError>
@@ -16,30 +18,30 @@ MainWindow::MainWindow(QWidget *parent) :
     //organize the window
     ui->endTicketDate->setDate(QDate::currentDate());
 
+    config = new Configuration();
+
     getTickets();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete config;
+    delete db;
 }
 
 bool MainWindow::connectDB()
 {
-    if (db.isValid())
-    {
-        if (db.isOpen()) return true;
-    }
-    else db = QSqlDatabase::addDatabase("QMYSQL");
+    db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
 
-    db.setHostName("localhost");
-    db.setDatabaseName("seisdepicas");
-    db.setUserName("piso");
-    db.setPassword("miketgood");
+    db->setHostName(config->hostName());
+    db->setDatabaseName(config->databaseName());
+    db->setUserName(config->userName());
+    db->setPassword(config->password());
 
-    if (!db.open())
+    if (!db->open())
     {
-        QMessageBox::critical(0,"Database error", db.lastError().text());
+        QMessageBox::critical(0,trUtf8("Error de conexión"), trUtf8("Vaya a \"Herramientas\"->\"Configurar BBDD\" e introduzca los datos de conexión válidos."));
         return false;
     }
 
@@ -245,4 +247,23 @@ void MainWindow::on_actionAddBuddy_triggered()
 
     UserDialog ud(this);
     ud.exec();
+}
+
+void MainWindow::on_actionConfigurar_BBDD_triggered()
+{
+    //remove old connection
+    QString connectionName;
+    connectionName = db->connectionName();
+    db->close();
+    delete db;
+    db->removeDatabase(connectionName);
+
+    DatabaseDialog dd(this->config, this);
+    int result = dd.exec();
+
+    delete config;
+    config = new Configuration();
+
+    if(result==QDialog::Accepted && connectDB()) getTickets();
+
 }

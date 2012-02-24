@@ -20,6 +20,7 @@ private:
 
 private slots:
     bool addUser();
+    bool deleteUser();
 };
 
 #endif // USERDIALOG_H

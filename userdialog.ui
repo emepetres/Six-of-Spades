@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item row="1" column="1" colspan="2">
-    <widget class="QLineEdit" name="newUser"/>
+    <widget class="QLineEdit" name="userName"/>
    </item>
    <item row="3" column="0">
     <widget class="QPushButton" name="cancelButton">

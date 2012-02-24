@@ -252,6 +252,8 @@ void MainWindow::on_actionAddBuddy_triggered()
 {
     UserDialog ud(this);
     ud.exec();
+
+    getTickets();
 }
 
 void MainWindow::on_actionConfigurar_BBDD_triggered()

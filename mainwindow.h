@@ -15,6 +15,7 @@ class MainWindow : public QMainWindow
 
 public:
     Configuration *config;
+    bool getTickets();
 
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -35,7 +36,6 @@ private:
     bool isDatabaseInitialized;
 
     bool connectDB();
-    bool getTickets();
     bool closeDB();
 };
 

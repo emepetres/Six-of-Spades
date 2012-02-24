@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    isDatabaseInitialized = false;
     ui->setupUi(this);
 
     //organize the window
@@ -32,7 +33,12 @@ MainWindow::~MainWindow()
 
 bool MainWindow::connectDB()
 {
+    if (isDatabaseInitialized)
+        if (db->isValid() && db->isOpen()) return true;
+        else closeDB();
+
     db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
+    isDatabaseInitialized = true;
 
     db->setHostName(config->hostName());
     db->setDatabaseName(config->databaseName());
@@ -53,13 +59,13 @@ bool MainWindow::connectDB()
         bool validQuery;
 
         //user table
-        validQuery = query.exec ("CREATE TABLE `seisdepicas`.`user` (`user` VARCHAR(40) NOT NULL,`passwd` VARCHAR(40), PRIMARY KEY (`user`)) ENGINE = InnoDB;");
+        validQuery = query.exec ("CREATE TABLE `user` (`user` VARCHAR(40) NOT NULL,`passwd` VARCHAR(40), PRIMARY KEY (`user`)) ENGINE = InnoDB;");
 
         //ticket table
-        validQuery = validQuery && query.exec ("CREATE TABLE `seisdepicas`.`ticket` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,`concept` VARCHAR(256) NOT NULL,`created` DATE  NOT NULL,`payed` DATE ,`amount` FLOAT  NOT NULL DEFAULT 0,`user` VARCHAR(40) NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `user_ticket` FOREIGN KEY `user` (`user`) REFERENCES `user` (`user`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;");
+        validQuery = validQuery && query.exec ("CREATE TABLE `ticket` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,`concept` VARCHAR(256) NOT NULL,`created` DATE  NOT NULL,`payed` DATE ,`amount` FLOAT  NOT NULL DEFAULT 0,`user` VARCHAR(40) NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `user_ticket` FOREIGN KEY `user` (`user`) REFERENCES `user` (`user`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;");
 
         //ticket_user table
-        validQuery = validQuery && query.exec ("CREATE TABLE `seisdepicas`.`ticket_user` (`idTicket` INT UNSIGNED NOT NULL, `user` VARCHAR(40) NOT NULL,`percent` FLOAT UNSIGNED NOT NULL, PRIMARY KEY (`idTicket`, `user`), CONSTRAINT `ticket` FOREIGN KEY `ticket` (`idTicket`) REFERENCES `ticket` (`id`) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT `user` FOREIGN KEY `user` (`user`) REFERENCES `user` (`user`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;");
+        validQuery = validQuery && query.exec ("CREATE TABLE `ticket_user` (`idTicket` INT UNSIGNED NOT NULL, `user` VARCHAR(40) NOT NULL,`percent` FLOAT UNSIGNED NOT NULL, PRIMARY KEY (`idTicket`, `user`), CONSTRAINT `ticket` FOREIGN KEY `ticket` (`idTicket`) REFERENCES `ticket` (`id`) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT `user` FOREIGN KEY `user` (`user`) REFERENCES `user` (`user`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;");
         if (!validQuery)
         {
             QMessageBox::critical(0,"Database error",  query.lastError().text());
@@ -88,7 +94,11 @@ bool MainWindow::getTickets()
 
         ui->ticketsTable->setModel(ticketsTableModel);
         ui->ticketsTable->resizeColumnsToContents();
+        int ticketsTableWidth = 672; //ui->ticketsTable->geometry().width();
+        ui->ticketsTable->setColumnWidth(3, ticketsTableWidth - ui->ticketsTable->columnWidth(0) - ui->ticketsTable->columnWidth(1) - ui->ticketsTable->columnWidth(2) - ui->ticketsTable->columnWidth(4) - ui->ticketsTable->columnWidth(5) -15);
         ui->ticketsTable->setAlternatingRowColors(true);
+
+        enableButtons(); //enable/disable buttons if there is some ticket selected or not
 
         return true;
     }
@@ -240,11 +250,6 @@ bool MainWindow::enableButtons()
 //Menu bar slots
 void MainWindow::on_actionAddBuddy_triggered()
 {
-    QSqlQueryModel userNameModel;
-
-    if (connectDB()) userNameModel.setQuery("SELECT user FROM user;");
-    else return;
-
     UserDialog ud(this);
     ud.exec();
 }
@@ -252,11 +257,7 @@ void MainWindow::on_actionAddBuddy_triggered()
 void MainWindow::on_actionConfigurar_BBDD_triggered()
 {
     //remove old connection
-    QString connectionName;
-    connectionName = db->connectionName();
-    db->close();
-    delete db;
-    db->removeDatabase(connectionName);
+    closeDB();
 
     DatabaseDialog dd(this->config, this);
     int result = dd.exec();
@@ -266,4 +267,14 @@ void MainWindow::on_actionConfigurar_BBDD_triggered()
 
     if(result==QDialog::Accepted && connectDB()) getTickets();
 
+}
+
+bool MainWindow::closeDB()
+{
+    QString connectionName;
+    connectionName = db->connectionName();
+    db->close();
+    delete db;
+    isDatabaseInitialized = false;
+    db->removeDatabase(connectionName);
 }

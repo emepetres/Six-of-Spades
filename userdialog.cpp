@@ -8,10 +8,21 @@ UserDialog::UserDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     //reposition of the widgets
-    ui->gridLayout->addWidget(ui->newUser, 0, 1, 1, 2);
-    ui->gridLayout->addWidget(ui->cancelButton, 2, 1);
-    ui->gridLayout->addWidget(ui->addButton, 2, 2);
-    ui->gridLayout->addWidget(ui->errorLabel,1,0,1,3);
+    ui->gridLayout->addWidget(ui->usersLabel, 0, 0, 1, 3);
+    ui->gridLayout->addWidget(ui->newUser, 1, 1, 1, 3);
+    ui->gridLayout->addWidget(ui->cancelButton, 3, 1);
+    ui->gridLayout->addWidget(ui->deleteButton, 3, 2);
+    ui->gridLayout->addWidget(ui->addButton, 3, 3);
+    ui->gridLayout->addWidget(ui->errorLabel,2,0,1,3);
+
+    QSqlQuery query;
+    query.exec ("SELECT user FROM user;");
+    QString users = QString("Usuarios: ");
+    while(query.next())
+    {
+        users = users + query.value(0).toString() + QString(", ");
+    }
+    ui->usersLabel->setText(users);
 }
 
 UserDialog::~UserDialog()

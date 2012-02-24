@@ -32,9 +32,11 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QSqlDatabase *db;
+    bool isDatabaseInitialized;
 
     bool connectDB();
     bool getTickets();
+    bool closeDB();
 };
 
 #endif // MAINWINDOW_H

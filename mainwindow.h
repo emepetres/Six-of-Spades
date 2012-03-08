@@ -1,9 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <configuration.h>
-#include <QMainWindow>
-#include <QtSql/QSqlDatabase>
+#include "configuration.h"
+#include <qmainwindow.h>
+#include <QtSql/qsqldatabase.h>
 
 namespace Ui {
     class MainWindow;

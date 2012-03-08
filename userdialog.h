@@ -1,7 +1,7 @@
 #ifndef USERDIALOG_H
 #define USERDIALOG_H
 
-#include <QDialog>
+#include <qdialog.h>
 
 namespace Ui {
     class UserDialog;

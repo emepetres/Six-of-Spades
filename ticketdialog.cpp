@@ -1,7 +1,9 @@
-#include <QObject>
+#include <qobject.h>
 #include "ticketdialog.h"
 #include "ui_ticketdialog.h"
-#include "qgridlayout.h"
+#include <qgridlayout.h>
+#include <qsqlrecord.h>
+#include <qsqlquery.h>
 
 TicketDialog::TicketDialog(QSqlQueryModel *userModel, QWidget *parent) :
     QDialog(parent),
@@ -75,8 +77,8 @@ bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
 
     //see if we have users
     usersNumber = userModel->rowCount();
-    usersCheckBoxes.reserve(usersNumber);
-    percentages.reserve(usersNumber);
+    usersCheckBoxes.resize(usersNumber);
+    percentages.resize(usersNumber);
     if (usersNumber==0)
     {
         //add error label and cancel button

@@ -5,9 +5,10 @@
 #include "configuration.h"
 #include "databasedialog.h"
 
-#include <QMessageBox>
+#include <qmessagebox.h>
 #include <QtSql/QSqlError>
-#include <QStandardItem>
+#include <QtSql/qsqlquery.h>
+#include <qstandarditemmodel.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -279,4 +280,6 @@ bool MainWindow::closeDB()
     delete db;
     isDatabaseInitialized = false;
     db->removeDatabase(connectionName);
+
+    return true;
 }

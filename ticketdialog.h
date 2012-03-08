@@ -1,10 +1,11 @@
 #ifndef TICKETDIALOG_H
 #define TICKETDIALOG_H
 
-#include <QDialog>
-#include <QtSql>
-#include <QCheckBox>
-#include <QLineEdit>
+#include <qdialog.h>
+#include <QtSql/qsqlquerymodel.h>
+#include <qitemselectionmodel.h>
+#include <qcheckbox.h>
+#include <qlineedit.h>
 
 using namespace std;
 

@@ -1,11 +1,11 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-#include <QString>
-#include <QObject>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QFile>
+#include <qstring.h>
+#include <qobject.h>
+#include <qsqldatabase.h>
+#include <qsqlerror.h>
+#include <qfile.h>
 
 class Configuration
 {

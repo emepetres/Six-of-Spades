@@ -1,6 +1,6 @@
 #include "userdialog.h"
 #include "ui_userdialog.h"
-#include <QtSql>
+#include <QtSql\qsqlquery.h>
 #include "mainwindow.h"
 
 UserDialog::UserDialog(QWidget *parent) :

@@ -1,8 +1,8 @@
 #include "configuration.h"
 
-#include <QSqlQueryModel>
-#include <QSqlQuery>
-#include <QtSql/QSqlDatabase>
+#include <qsqlquerymodel.h>
+#include <qsqlquery.h>
+#include <QtSql/qsqldatabase.h>
 
 Configuration::Configuration(QString hostName, QString databaseName, QString userName, QString password)
 {

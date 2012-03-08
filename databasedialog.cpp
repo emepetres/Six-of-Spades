@@ -1,6 +1,6 @@
 #include "databasedialog.h"
 #include "ui_databasedialog.h"
-#include <QSqlQuery>
+#include <qsqlquery.h>
 
 DatabaseDialog::DatabaseDialog(Configuration *config, QWidget *parent) :
     QDialog(parent),

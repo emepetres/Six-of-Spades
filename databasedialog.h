@@ -2,7 +2,7 @@
 #define DATABASEDIALOG_H
 
 #include "configuration.h"
-#include <QDialog>
+#include <qdialog.h>
 
 namespace Ui {
     class DatabaseDialog;

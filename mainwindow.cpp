@@ -34,8 +34,10 @@ MainWindow::~MainWindow()
 bool MainWindow::connectDB()
 {
     if (isDatabaseInitialized)
+    {
         if (db->isValid() && db->isOpen()) return true;
         else closeDB();
+    }
 
     db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
     isDatabaseInitialized = true;
@@ -168,8 +170,8 @@ bool MainWindow::calculeBill()
     QMap<QString, float> bill;
 
     int id, last_id = -1;
-    QString user, contributor;
-    float cost, percent;
+    QString user;
+    float cost = 0;
     vector <QString> contributors;
     vector <float> contributorsPercentages;
     float percentAccum = 0;
@@ -188,7 +190,7 @@ bool MainWindow::calculeBill()
                 //if it is not first time, update the bill with the ticket
                 if (contributorsNotEqual==0) {
                     float percentMoney = cost / contributors.size();
-                    for (int i=0; i<contributors.size(); i++) {
+                    for (unsigned int i=0; i<contributors.size(); i++) {
                         bill[contributors[i]] = bill[contributors[i]] - percentMoney;
                     }
                     bill[user] = bill[user] + cost;
@@ -196,7 +198,7 @@ bool MainWindow::calculeBill()
                 else
                 {
                     float percentMoney = cost*(100.0 - percentAccum)/(contributors.size() - contributorsNotEqual)/100.0;
-                    for (int i=0; i<contributors.size(); i++) {
+                    for (unsigned int i=0; i<contributors.size(); i++) {
                         if (contributorsPercentages[i]>0)
                             bill[contributors[i]] = bill[contributors[i]] - cost*contributorsPercentages[i]/100.0;
                         else bill[contributors[i]] = bill[contributors[i]] - percentMoney;
@@ -279,4 +281,6 @@ bool MainWindow::closeDB()
     delete db;
     isDatabaseInitialized = false;
     db->removeDatabase(connectionName);
+
+    return true;
 }

@@ -29,5 +29,4 @@ FORMS    += mainwindow.ui \
     userdialog.ui \
     databasedialog.ui
 
-OTHER_FILES += \
-    database_config.txt
+OTHER_FILES +=

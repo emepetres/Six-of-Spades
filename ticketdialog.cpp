@@ -51,6 +51,21 @@ TicketDialog::TicketDialog(QSqlQueryModel *userModel, QItemSelectionModel *ticke
         ui->conceptLineEdit->setText(concept);
         ui->costLineEdit->setText(QString::number(amount));
         ui->dateEdit->setDate(payed);
+
+        QSqlQuery query;
+        query.exec ("select user, percent from ticket_user where idTicket='"+ QString::number(id) +"';");
+        while (query.next())
+        {
+            QString _user = query.value(0).toString();
+            for (int i=0; i<usersNumber; ++i)
+                if (usersCheckBoxes[i]->text()==_user)
+                {
+                    usersCheckBoxes[i]->setChecked(true);
+                    if (query.value(1).toString()=="0") percentages[i]->setText("igual");
+                    else percentages[i]->setText(query.value(1).toString());
+                    break;
+                }
+        }
     }
 }
 
@@ -77,8 +92,8 @@ bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
 
     //see if we have users
     usersNumber = userModel->rowCount();
-    usersCheckBoxes.resize(usersNumber);
-    percentages.resize(usersNumber);
+    usersCheckBoxes.reserve(usersNumber);
+    percentages.reserve(usersNumber);
     if (usersNumber==0)
     {
         //add error label and cancel button
@@ -102,11 +117,11 @@ bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
             checkBox = new QCheckBox(userModel->record(i).value(0).toString(), this);
             checkBox->setLayoutDirection(Qt::RightToLeft);
             gridLayout->addWidget(checkBox, i+4, 1);
-            usersCheckBoxes[i] = checkBox;
+            usersCheckBoxes.push_back(checkBox);
 
             lineEdit = new QLineEdit("igual");
             gridLayout->addWidget(lineEdit, i+4, 2);
-            percentages[i] = lineEdit;
+            percentages.push_back(lineEdit);
 
             percent = new QLabel("%");
             gridLayout->addWidget(percent, i+4, 3);

@@ -158,18 +158,17 @@ bool MainWindow::deleteTicket()
 
 bool MainWindow::calculeBill()
 {
-    //SELECT idTicket, ticket.user, amount, ticket_user.user, percent FROM ticket, ticket_user WHERE id = idTicket AND payed>='2012-01-05' AND payed<='2012-02-13' ORDER BY idTicket ASC;
-
     QSqlQuery query;
     query.setForwardOnly(true);
 
-    if (connectDB()) query.exec("SELECT idTicket, ticket.user, amount, ticket_user.user, percent FROM ticket, ticket_user WHERE id = idTicket AND payed>='" +
+    if (connectDB()) query.exec("SELECT idTicket, ticket.user, amount, ticket_user.user, percent, concept, payed FROM ticket, ticket_user WHERE id = idTicket AND payed>='" +
                                             ui->startTicketDate->date().toString("yyyy-MM-dd") + "' AND payed<='" +
                                             ui->endTicketDate->date().toString("yyyy-MM-dd") + "' ORDER BY idTicket ASC;");
     else return false;
 
     //bill data
     QMap<QString, float> bill;
+    QString ticketsDetail;
 
     int id, last_id = -1;
     QString user;
@@ -213,6 +212,7 @@ bool MainWindow::calculeBill()
             user = query.value(1).toString();
             cost = query.value(2).toFloat();
             last_id = id;
+            ticketsDetail = ticketsDetail + "\nTicket " + QString::number(id) + ", pagado por "+user+" el "+query.value(6).toDate().toString("dd-MM-yyyy")+": "+query.value(5).toString()+", "+QString::number(cost)+trUtf8("€\n");
 
             contributors.clear();
             contributorsPercentages.clear();
@@ -227,7 +227,9 @@ bool MainWindow::calculeBill()
         {
             contributorsNotEqual++;
             percentAccum = percentAccum + query.value(4).toFloat();
+            ticketsDetail = ticketsDetail + "\t- " + query.value(3).toString() + " contribuye en un "+query.value(4).toString()+trUtf8("%.\n");
         }
+        else ticketsDetail = ticketsDetail + "\t- " + query.value(3).toString() + " contribuye igual.\n";
     }
 
     //write bill text
@@ -240,6 +242,8 @@ bool MainWindow::calculeBill()
     for (it = bill.begin(); it != bill.end(); ++it)
         if (it.value()<0) billText = billText + it.key() + QString(" debe ") + QString::number(abs(it.value())) + QString(trUtf8("€ \n"));
         else billText = billText + it.key() + QString(" recibe ") + QString::number(abs(it.value())) + QString(trUtf8("€ \n"));
+
+    billText = billText + "\n\n" + ticketsDetail;
 
     ui->billTextBox->setText(billText);
     ui->saveButton->setEnabled(true);
@@ -300,7 +304,7 @@ bool MainWindow::saveBill()
     if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QTextStream out(&file);
-        out << ui->billTextBox->toPlainText();
+        out << ui->billTextBox->toPlainText() << "\n\n Creado por Seis de Picas.";
 
         file.close();
 

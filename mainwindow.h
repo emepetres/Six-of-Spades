@@ -27,6 +27,7 @@ private slots:
     bool enableButtons();
     bool calculeBill();
     void on_actionAddBuddy_triggered();
+    bool saveBill();
 
     void on_actionConfigurar_BBDD_triggered();
 

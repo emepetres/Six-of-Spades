@@ -9,6 +9,7 @@
 #include <QtSql/QSqlError>
 #include <QtSql/qsqlquery.h>
 #include <qstandarditemmodel.h>
+#include <qtextstream.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -229,12 +230,19 @@ bool MainWindow::calculeBill()
         }
     }
 
-    QString billText;
+    //write bill text
+    QString billText("Cuentas de piso calculadas el " + QDate::currentDate().toString("dd-MM-yyyy") +
+                     " a las " + QTime::currentTime().toString("hh:mm:ss") +
+                     trUtf8(", desde el día ")+ ui->startTicketDate->date().toString("dd-MM-yyyy") +
+                     trUtf8(" hasta el día ")+ ui->endTicketDate->date().toString("dd-MM-yyyy")+
+                     ", ambos incluidos.\n\n");
     QMap<QString, float>::iterator it;
     for (it = bill.begin(); it != bill.end(); ++it)
-        billText = billText + it.key() + QString(": ") + QString::number(it.value()) + QString("\n");
+        if (it.value()<0) billText = billText + it.key() + QString(" debe ") + QString::number(abs(it.value())) + QString(trUtf8("€ \n"));
+        else billText = billText + it.key() + QString(" recibe ") + QString::number(abs(it.value())) + QString(trUtf8("€ \n"));
 
     ui->billTextBox->setText(billText);
+    ui->saveButton->setEnabled(true);
 
     return true;
 }
@@ -284,4 +292,19 @@ bool MainWindow::closeDB()
     db->removeDatabase(connectionName);
 
     return true;
+}
+
+bool MainWindow::saveBill()
+{
+    QFile file("cuentas " + QDate::currentDate().toString("yyyy-MM-dd") + ", " + QTime::currentTime().toString("hh:mm:ss")+".txt");
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&file);
+        out << ui->billTextBox->toPlainText();
+
+        file.close();
+
+        return true;
+    }
+    else return false;
 }

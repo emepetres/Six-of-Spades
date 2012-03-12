@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>708</width>
+    <width>714</width>
     <height>622</height>
    </rect>
   </property>
@@ -150,7 +150,7 @@
        <bool>false</bool>
       </property>
       <property name="text">
-       <string>Editar</string>
+       <string>Ver/Editar</string>
       </property>
      </widget>
     </item>
@@ -171,7 +171,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>708</width>
+     <width>714</width>
      <height>26</height>
     </rect>
    </property>

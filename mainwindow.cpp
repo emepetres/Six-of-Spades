@@ -270,7 +270,7 @@ void MainWindow::on_actionConfigurar_BBDD_triggered()
     delete config;
     config = new Configuration();
 
-    if(result==QDialog::Accepted && connectDB()) getTickets();
+    if(connectDB()) getTickets();
 
 }
 

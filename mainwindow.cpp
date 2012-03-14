@@ -6,7 +6,7 @@
 #include "databasedialog.h"
 
 #include <qmessagebox.h>
-#include <QtSql/QSqlError>
+//#include <QtSql/QSqlError>
 #include <QtSql/qsqlquery.h>
 #include <qstandarditemmodel.h>
 
@@ -48,7 +48,7 @@ bool MainWindow::connectDB()
 
     if (!db->open())
     {
-        QMessageBox::critical(0,trUtf8("Error de conexión"), trUtf8("Vaya a \"Herramientas\"->\"Configurar BBDD\" e introduzca los datos de conexión válidos."));
+		QMessageBox::warning(0,trUtf8("Error de conexión"), trUtf8("Vaya a \"Herramientas\"->\"Configurar BBDD\" e introduzca los datos de conexión válidos."));
         return false;
     }
 

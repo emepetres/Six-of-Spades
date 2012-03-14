@@ -3,6 +3,7 @@
 #include <qsqlquerymodel.h>
 #include <qsqlquery.h>
 #include <QtSql/qsqldatabase.h>
+#include <qmessagebox.h>
 
 Configuration::Configuration(QString hostName, QString databaseName, QString userName, QString password)
 {
@@ -21,7 +22,6 @@ bool Configuration::OpenConfigDatabase()
         //open/create sqlite configuration database
         db = new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE"));
         db->setDatabaseName("config.sqlite");
-        QString error = db->lastError().text();
 
         if (db->open())
         {
@@ -47,8 +47,6 @@ bool Configuration::OpenConfigDatabase()
             table->setQuery("select value from properties where property='password'");
             if (table->rowCount()==0) { query.exec("insert into properties (property, value) values ('password', '-');"); }
 
-            error = table->lastError().text();
-
             //read properties
             query.exec("select value from properties where property='hostName';");
             query.next(); _hostName = query.value(0).toString();
@@ -59,14 +57,17 @@ bool Configuration::OpenConfigDatabase()
             query.exec("select value from properties where property='password';");
             query.next(); _password = query.value(0).toString();
 
-            error = table->lastError().text();
-
             query.clear();
             table->clear();
 
             closed = false;
             return true;
-        } else return false;
+        } 
+		else 
+		{
+			QMessageBox::warning(0,"No es posible configurar", db->lastError().text());
+			return false;
+		}
     } else return false;
 }
 
@@ -88,7 +89,7 @@ bool Configuration::CloseDatabase()
 
 Configuration::Configuration()
 {
-    OpenConfigDatabase();
-
-    CloseDatabase();
+	closed = true;
+    if (OpenConfigDatabase())
+		CloseDatabase();
 }

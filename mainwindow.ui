@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>708</width>
+    <width>714</width>
     <height>622</height>
    </rect>
   </property>
@@ -118,7 +118,7 @@
      </widget>
     </item>
     <item row="5" column="4">
-     <widget class="QPushButton" name="pushButton_4">
+     <widget class="QPushButton" name="saveAndRemoveButton">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -128,7 +128,7 @@
      </widget>
     </item>
     <item row="5" column="3">
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="saveButton">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -150,7 +150,7 @@
        <bool>false</bool>
       </property>
       <property name="text">
-       <string>Editar</string>
+       <string>Ver/Editar</string>
       </property>
      </widget>
     </item>
@@ -171,7 +171,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>708</width>
+     <width>714</width>
      <height>26</height>
     </rect>
    </property>
@@ -202,7 +202,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAddBuddy">
    <property name="text">
-    <string>Añadir compañer@</string>
+    <string>Añadir/Borrar compañer@</string>
    </property>
   </action>
   <action name="actionConfigurar_BBDD">
@@ -226,8 +226,8 @@
    <slot>addTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>481</x>
-     <y>224</y>
+     <x>686</x>
+     <y>589</y>
     </hint>
     <hint type="destinationlabel">
      <x>542</x>
@@ -242,8 +242,8 @@
    <slot>editTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>434</x>
-     <y>249</y>
+     <x>475</x>
+     <y>589</y>
     </hint>
     <hint type="destinationlabel">
      <x>542</x>
@@ -258,8 +258,8 @@
    <slot>enableButtons()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>326</x>
-     <y>285</y>
+     <x>335</x>
+     <y>555</y>
     </hint>
     <hint type="destinationlabel">
      <x>371</x>
@@ -274,8 +274,8 @@
    <slot>deleteTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>463</x>
-     <y>279</y>
+     <x>377</x>
+     <y>589</y>
     </hint>
     <hint type="destinationlabel">
      <x>542</x>
@@ -299,6 +299,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>saveButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveBill()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>422</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>223</x>
+     <y>292</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addTicket()</slot>
@@ -306,5 +322,6 @@
   <slot>enableButtons()</slot>
   <slot>deleteTicket()</slot>
   <slot>calculeBill()</slot>
+  <slot>saveBill()</slot>
  </slots>
 </ui>

@@ -9,6 +9,7 @@
 //#include <QtSql/QSqlError>
 #include <QtSql/qsqlquery.h>
 #include <qstandarditemmodel.h>
+#include <qtextstream.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -35,8 +36,10 @@ MainWindow::~MainWindow()
 bool MainWindow::connectDB()
 {
     if (isDatabaseInitialized)
+    {
         if (db->isValid() && db->isOpen()) return true;
         else closeDB();
+    }
 
     db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
     isDatabaseInitialized = true;
@@ -155,22 +158,21 @@ bool MainWindow::deleteTicket()
 
 bool MainWindow::calculeBill()
 {
-    //SELECT idTicket, ticket.user, amount, ticket_user.user, percent FROM ticket, ticket_user WHERE id = idTicket AND payed>='2012-01-05' AND payed<='2012-02-13' ORDER BY idTicket ASC;
-
     QSqlQuery query;
     query.setForwardOnly(true);
 
-    if (connectDB()) query.exec("SELECT idTicket, ticket.user, amount, ticket_user.user, percent FROM ticket, ticket_user WHERE id = idTicket AND payed>='" +
+    if (connectDB()) query.exec("SELECT idTicket, ticket.user, amount, ticket_user.user, percent, concept, payed FROM ticket, ticket_user WHERE id = idTicket AND payed>='" +
                                             ui->startTicketDate->date().toString("yyyy-MM-dd") + "' AND payed<='" +
                                             ui->endTicketDate->date().toString("yyyy-MM-dd") + "' ORDER BY idTicket ASC;");
     else return false;
 
     //bill data
     QMap<QString, float> bill;
+    QString ticketsDetail;
 
     int id, last_id = -1;
-    QString user, contributor;
-    float cost, percent;
+    QString user;
+    float cost = 0;
     vector <QString> contributors;
     vector <float> contributorsPercentages;
     float percentAccum = 0;
@@ -189,7 +191,7 @@ bool MainWindow::calculeBill()
                 //if it is not first time, update the bill with the ticket
                 if (contributorsNotEqual==0) {
                     float percentMoney = cost / contributors.size();
-                    for (int i=0; i<contributors.size(); i++) {
+                    for (unsigned int i=0; i<contributors.size(); i++) {
                         bill[contributors[i]] = bill[contributors[i]] - percentMoney;
                     }
                     bill[user] = bill[user] + cost;
@@ -197,7 +199,7 @@ bool MainWindow::calculeBill()
                 else
                 {
                     float percentMoney = cost*(100.0 - percentAccum)/(contributors.size() - contributorsNotEqual)/100.0;
-                    for (int i=0; i<contributors.size(); i++) {
+                    for (unsigned int i=0; i<contributors.size(); i++) {
                         if (contributorsPercentages[i]>0)
                             bill[contributors[i]] = bill[contributors[i]] - cost*contributorsPercentages[i]/100.0;
                         else bill[contributors[i]] = bill[contributors[i]] - percentMoney;
@@ -210,6 +212,7 @@ bool MainWindow::calculeBill()
             user = query.value(1).toString();
             cost = query.value(2).toFloat();
             last_id = id;
+            ticketsDetail = ticketsDetail + "\nTicket " + QString::number(id) + ", pagado por "+user+" el "+query.value(6).toDate().toString("dd-MM-yyyy")+": "+query.value(5).toString()+", "+QString::number(cost)+trUtf8("€\n");
 
             contributors.clear();
             contributorsPercentages.clear();
@@ -224,15 +227,26 @@ bool MainWindow::calculeBill()
         {
             contributorsNotEqual++;
             percentAccum = percentAccum + query.value(4).toFloat();
+            ticketsDetail = ticketsDetail + "\t- " + query.value(3).toString() + " contribuye en un "+query.value(4).toString()+trUtf8("%.\n");
         }
+        else ticketsDetail = ticketsDetail + "\t- " + query.value(3).toString() + " contribuye igual.\n";
     }
 
-    QString billText;
+    //write bill text
+    QString billText("Cuentas de piso calculadas el " + QDate::currentDate().toString("dd-MM-yyyy") +
+                     " a las " + QTime::currentTime().toString("hh:mm:ss") +
+                     trUtf8(", desde el día ")+ ui->startTicketDate->date().toString("dd-MM-yyyy") +
+                     trUtf8(" hasta el día ")+ ui->endTicketDate->date().toString("dd-MM-yyyy")+
+                     ", ambos incluidos.\n\n");
     QMap<QString, float>::iterator it;
     for (it = bill.begin(); it != bill.end(); ++it)
-        billText = billText + it.key() + QString(": ") + QString::number(it.value()) + QString("\n");
+        if (it.value()<0) billText = billText + it.key() + QString(" debe ") + QString::number(abs(it.value())) + QString(trUtf8("€ \n"));
+        else billText = billText + it.key() + QString(" recibe ") + QString::number(abs(it.value())) + QString(trUtf8("€ \n"));
+
+    billText = billText + "\n\n" + ticketsDetail;
 
     ui->billTextBox->setText(billText);
+    ui->saveButton->setEnabled(true);
 
     return true;
 }
@@ -268,7 +282,7 @@ void MainWindow::on_actionConfigurar_BBDD_triggered()
     delete config;
     config = new Configuration();
 
-    if(result==QDialog::Accepted && connectDB()) getTickets();
+    if(connectDB()) getTickets();
 
 }
 
@@ -282,4 +296,19 @@ bool MainWindow::closeDB()
     db->removeDatabase(connectionName);
 
     return true;
+}
+
+bool MainWindow::saveBill()
+{
+    QFile file("cuentas " + QDate::currentDate().toString("yyyy-MM-dd") + ", " + QTime::currentTime().toString("hh:mm:ss")+".txt");
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&file);
+        out << ui->billTextBox->toPlainText() << "\n\n Creado por Seis de Picas.";
+
+        file.close();
+
+        return true;
+    }
+    else return false;
 }

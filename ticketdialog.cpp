@@ -4,6 +4,7 @@
 #include <qgridlayout.h>
 #include <qsqlrecord.h>
 #include <qsqlquery.h>
+#include <QDebug>
 
 TicketDialog::TicketDialog(QSqlQueryModel *userModel, QWidget *parent) :
     QDialog(parent),
@@ -18,6 +19,9 @@ TicketDialog::TicketDialog(QSqlQueryModel *userModel, QWidget *parent) :
         ((QGridLayout *)layout())->addWidget(ui->add_Button, usersNumber+5, 2);
         ((QGridLayout *)layout())->addWidget(ui->addMore_Button, usersNumber+5, 3);
     }
+
+    editDialog = false;
+    isEditing = false;
 }
 
 TicketDialog::TicketDialog(QSqlQueryModel *userModel, QItemSelectionModel *ticketSelectionModel, QWidget *parent) :
@@ -32,14 +36,12 @@ TicketDialog::TicketDialog(QSqlQueryModel *userModel, QItemSelectionModel *ticke
         ui->add_Button->setText("Editar");
         ((QGridLayout *)layout())->addWidget(ui->add_Button, usersNumber+5, 3);
         ui->addMore_Button->hide();
-        //TODO: PROVISIONAL
-        ui->add_Button->setEnabled(false);
 
         //get the fields of the ticket to edit
         QModelIndexList ticketIndexes = ticketSelectionModel->selectedIndexes();
         const QAbstractItemModel *ticketModel = ticketSelectionModel->model();
 
-        int id = ticketModel->data(ticketIndexes.at(0)).toInt();
+        id = ticketModel->data(ticketIndexes.at(0)).toInt();
         QDate payed = ticketModel->data(ticketIndexes.at(1)).toDate();
         QString user = ticketModel->data(ticketIndexes.at(2)).toString();
         QString concept = ticketModel->data(ticketIndexes.at(3)).toString();
@@ -51,6 +53,36 @@ TicketDialog::TicketDialog(QSqlQueryModel *userModel, QItemSelectionModel *ticke
         ui->conceptLineEdit->setText(concept);
         ui->costLineEdit->setText(QString::number(amount));
         ui->dateEdit->setDate(payed);
+
+        QSqlQuery query;
+        query.exec ("select user, percent from ticket_user where idTicket='"+ QString::number(id) +"';");
+        while (query.next())
+        {
+            QString _user = query.value(0).toString();
+            for (int i=0; i<usersNumber; ++i)
+            {
+                if (usersCheckBoxes[i]->text()==_user)
+                {
+                    usersCheckBoxes[i]->setChecked(true);
+                    if (query.value(1).toString()=="0") percentages[i]->setText("igual");
+                    else percentages[i]->setText(query.value(1).toString());
+                    break;
+                }
+            }
+        }
+
+        //deactivate all dialogs
+        ui->comboBox->setDisabled(true);
+        ui->conceptLineEdit->setDisabled(true);
+        ui->costLineEdit->setDisabled(true);
+        ui->dateEdit->setDisabled(true);
+        for (int i=0; i<usersNumber; ++i)
+        {
+            usersCheckBoxes[i]->setDisabled(true);
+            percentages[i]->setDisabled(true);
+        }
+        editDialog = true;
+        isEditing = false;
     }
 }
 
@@ -77,8 +109,8 @@ bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
 
     //see if we have users
     usersNumber = userModel->rowCount();
-    usersCheckBoxes.resize(usersNumber);
-    percentages.resize(usersNumber);
+    usersCheckBoxes.reserve(usersNumber);
+    percentages.reserve(usersNumber);
     if (usersNumber==0)
     {
         //add error label and cancel button
@@ -102,11 +134,11 @@ bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
             checkBox = new QCheckBox(userModel->record(i).value(0).toString(), this);
             checkBox->setLayoutDirection(Qt::RightToLeft);
             gridLayout->addWidget(checkBox, i+4, 1);
-            usersCheckBoxes[i] = checkBox;
+            usersCheckBoxes.push_back(checkBox);
 
             lineEdit = new QLineEdit("igual");
             gridLayout->addWidget(lineEdit, i+4, 2);
-            percentages[i] = lineEdit;
+            percentages.push_back(lineEdit);
 
             percent = new QLabel("%");
             gridLayout->addWidget(percent, i+4, 3);
@@ -121,17 +153,104 @@ bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
 
 bool TicketDialog::addTicket()
 {
-    QString written = writeTicket();
-
-    if (written.compare("")==0)
+    if (!editDialog)
     {
-        QDialog::accept();
-        return true;
+        QString written = writeTicket();
+
+        if (written.compare("")==0)
+        {
+            QDialog::accept();
+            return true;
+        }
+        else
+        {
+            ui->errorLabel->setText(written);
+            return false;
+        }
     }
     else
     {
-        ui->errorLabel->setText(written);
-        return false;
+        if (!isEditing)
+        {
+            ui->add_Button->setText("Guardar");
+            isEditing = true;
+
+            //activate all fields
+            ui->comboBox->setEnabled(true);
+            ui->conceptLineEdit->setEnabled(true);
+            ui->costLineEdit->setEnabled(true);
+            ui->dateEdit->setEnabled(true);
+            for (int i=0; i<usersNumber; ++i)
+            {
+                usersCheckBoxes[i]->setEnabled(true);
+                percentages[i]->setEnabled(true);
+            }
+            return true;
+        }
+        else
+        {
+            bool isnumber, validQuery;
+            QString cost = ui->costLineEdit->text();
+
+            //check that all number fields have numbers (cost and percentages)
+            cost.toFloat(&isnumber);
+            if (!isnumber) { ui->errorLabel->setText(trUtf8("Error: El coste no es un numero valido.")); return false; }
+
+            float percent;
+            for (int i=0; i<usersNumber && isnumber; i++) {
+                if (usersCheckBoxes[i]->isChecked() && percentages[i]->text().compare("igual")!=0)
+                {
+                    percent = percentages[i]->text().toFloat(&isnumber);
+                    isnumber = isnumber && percent > 0 && percent < 100;
+                    if (!isnumber) { ui->errorLabel->setText("El porcentaje " + QString::number(i+1) + trUtf8(" no es válido")); return false; }
+                }
+            }
+
+            //update ticket with the information
+            QString user = ui->comboBox->currentText();
+            QString concept = ui->conceptLineEdit->text();
+            QDate emission_date = ui->dateEdit->date();
+            QSqlQuery query;
+            validQuery = query.exec ("update ticket set concept='" + concept +
+                                     "', created='" + QDate::currentDate().toString("yyyy-MM-dd") +
+                                     "', payed='" + emission_date.toString("yyyy-MM-dd") +
+                                     "', amount=" + cost +
+                                     ", user='" + user +
+                                     "' where id=" + QString::number(id) +";");
+
+            QString jorl = "update ticket set concept='" + concept +
+                    "', created='" + QDate::currentDate().toString("yyyy-MM-dd") +
+                    "', payed='" + emission_date.toString("yyyy-MM-dd") +
+                    "', amount=" + cost +
+                    ", user='" + user +
+                    "' where id=" + QString::number(id) +";";
+            qDebug() << jorl;
+
+            if (!validQuery) { ui->errorLabel->setText("Error actualizando el ticket."); return false; }
+
+
+            //update the contributors of the ticket (remove olds and add the new ones)
+            query.exec("delete from ticket_user where idTicket="+QString::number(id)+";");
+            QString percentage;
+            for (int i=0; i<usersNumber && validQuery; i++) {
+                if (usersCheckBoxes[i]->isChecked()) {
+                    if (percentages[i]->text().compare("igual")==0) percentage = "0";
+                    else percentage = percentages[i]->text();
+
+                    validQuery = validQuery && query.exec ("insert into ticket_user (idTicket, user, percent) VALUES ("+
+                                                   QString::number(id) + ", '"+
+                                                   usersCheckBoxes[i]->text() + "', " +
+                                                   percentage +");");
+                }
+            }
+
+            if (!validQuery) { ui->errorLabel->setText(trUtf8("Error actualizando el ticket, por favor, inténtelo otra vez.")); return false; }
+            else
+            {
+                QDialog::accept();
+                return true;
+            }
+        }
     }
 }
 

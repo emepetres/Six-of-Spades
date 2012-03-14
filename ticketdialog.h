@@ -30,6 +30,9 @@ private:
     vector<QCheckBox *> usersCheckBoxes;
     vector<QLineEdit *> percentages;
     int usersNumber;
+    bool editDialog; //to know if we are adding a new ticket, or viewing/editing one
+    bool isEditing; //if we are in edit mode
+    int id; //id of the ticket being edited
 
     Ui::TicketDialog *ui;
     bool organizeDialog(QSqlQueryModel *userModel);

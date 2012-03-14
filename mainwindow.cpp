@@ -4,6 +4,7 @@
 #include "userdialog.h"
 #include "configuration.h"
 #include "databasedialog.h"
+#include "about.h"
 
 #include <qmessagebox.h>
 #include <QtSql/qsqlquery.h>
@@ -317,7 +318,6 @@ bool MainWindow::saveBill()
         out << ui->billTextBox->toPlainText() << "\n\n Creado por Seis de Picas.";
 
         file.close();
-
         return true;
     }
     else 
@@ -347,4 +347,10 @@ bool MainWindow::saveAndRemoveBill()
         }
         else return false;
     } else return false;
+}
+
+void MainWindow::on_actionSobre_Seis_De_Picas_triggered()
+{
+    About ab;
+    ab.exec();
 }

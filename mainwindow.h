@@ -33,6 +33,8 @@ private slots:
 
     void on_actionConfigurar_BBDD_triggered();
 
+    void on_actionSobre_Seis_De_Picas_triggered();
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase *db;

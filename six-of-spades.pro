@@ -16,17 +16,20 @@ SOURCES += main.cpp\
     ticketdialog.cpp \
     userdialog.cpp \
     configuration.cpp \
-    databasedialog.cpp
+    databasedialog.cpp \
+    about.cpp
 
 HEADERS  += mainwindow.h \
     ticketdialog.h \
     userdialog.h \
     configuration.h \
-    databasedialog.h
+    databasedialog.h \
+    about.h
 
 FORMS    += mainwindow.ui \
     ticketdialog.ui \
     userdialog.ui \
-    databasedialog.ui
+    databasedialog.ui \
+    about.ui
 
 OTHER_FILES +=

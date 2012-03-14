@@ -166,6 +166,9 @@ bool MainWindow::calculeBill()
                                             ui->endTicketDate->date().toString("yyyy-MM-dd") + "' ORDER BY idTicket ASC;");
     else return false;
 
+    billStartDate = ui->startTicketDate->date();
+    billEndDate = ui->endTicketDate->date();
+
     //bill data
     QMap<QString, float> bill;
     QString ticketsDetail;
@@ -247,6 +250,7 @@ bool MainWindow::calculeBill()
 
     ui->billTextBox->setText(billText);
     ui->saveButton->setEnabled(true);
+    ui->saveAndRemoveButton->setEnabled(true);
 
     return true;
 }
@@ -311,4 +315,22 @@ bool MainWindow::saveBill()
         return true;
     }
     else return false;
+}
+
+bool MainWindow::saveAndRemoveBill()
+{
+    if (saveBill())
+    {
+        QSqlQuery query;
+        bool valid;
+        if (connectDB())
+        {
+            valid = query.exec("DELETE FROM ticket WHERE payed>='" +
+                                                ui->startTicketDate->date().toString("yyyy-MM-dd") + "' AND payed<='" +
+                                                ui->endTicketDate->date().toString("yyyy-MM-dd") + "';");
+            if (valid) getTickets();
+            return valid;
+        }
+        else return false;
+    } else return false;
 }

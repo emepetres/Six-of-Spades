@@ -315,6 +315,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>saveAndRemoveButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveAndRemoveBill()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>561</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addTicket()</slot>
@@ -323,5 +339,6 @@
   <slot>deleteTicket()</slot>
   <slot>calculeBill()</slot>
   <slot>saveBill()</slot>
+  <slot>saveAndRemoveBill()</slot>
  </slots>
 </ui>

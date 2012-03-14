@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>714</width>
-    <height>622</height>
+    <width>744</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -65,22 +65,6 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="0" colspan="8">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Expanding</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="7" column="0">
      <widget class="QLabel" name="label">
       <property name="sizePolicy">
@@ -97,13 +81,6 @@
       </property>
       <property name="text">
        <string>Tickets:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0" rowspan="2" colspan="5">
-     <widget class="QTextEdit" name="billTextBox">
-      <property name="readOnly">
-       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -164,6 +141,29 @@
       </property>
      </widget>
     </item>
+    <item row="3" column="0" rowspan="2" colspan="5">
+     <widget class="QTextEdit" name="billTextBox">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="5">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Expanding</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -171,7 +171,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>714</width>
+     <width>744</width>
      <height>26</height>
     </rect>
    </property>
@@ -226,8 +226,8 @@
    <slot>addTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>686</x>
-     <y>589</y>
+     <x>702</x>
+     <y>585</y>
     </hint>
     <hint type="destinationlabel">
      <x>542</x>
@@ -242,8 +242,8 @@
    <slot>editTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>475</x>
-     <y>589</y>
+     <x>537</x>
+     <y>585</y>
     </hint>
     <hint type="destinationlabel">
      <x>542</x>
@@ -258,8 +258,8 @@
    <slot>enableButtons()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>335</x>
-     <y>555</y>
+     <x>344</x>
+     <y>550</y>
     </hint>
     <hint type="destinationlabel">
      <x>371</x>
@@ -274,8 +274,8 @@
    <slot>deleteTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>377</x>
-     <y>589</y>
+     <x>392</x>
+     <y>585</y>
     </hint>
     <hint type="destinationlabel">
      <x>542</x>
@@ -322,12 +322,12 @@
    <slot>saveAndRemoveBill()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>561</x>
-     <y>297</y>
+     <x>627</x>
+     <y>300</y>
     </hint>
     <hint type="destinationlabel">
-     <x>420</x>
-     <y>324</y>
+     <x>452</x>
+     <y>327</y>
     </hint>
    </hints>
   </connection>

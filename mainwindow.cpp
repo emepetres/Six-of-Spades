@@ -6,10 +6,10 @@
 #include "databasedialog.h"
 
 #include <qmessagebox.h>
-//#include <QtSql/QSqlError>
 #include <QtSql/qsqlquery.h>
 #include <qstandarditemmodel.h>
 #include <qtextstream.h>
+#include <qdebug.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -166,6 +166,9 @@ bool MainWindow::calculeBill()
                                             ui->endTicketDate->date().toString("yyyy-MM-dd") + "' ORDER BY idTicket ASC;");
     else return false;
 
+	startBillDate = ui->startTicketDate->date();
+	endBillDate = ui->endTicketDate->date();
+
     //bill data
     QMap<QString, float> bill;
     QString ticketsDetail;
@@ -247,6 +250,7 @@ bool MainWindow::calculeBill()
 
     ui->billTextBox->setText(billText);
     ui->saveButton->setEnabled(true);
+	ui->saveAndRemoveButton->setEnabled(true);
 
     return true;
 }
@@ -300,7 +304,7 @@ bool MainWindow::closeDB()
 
 bool MainWindow::saveBill()
 {
-    QFile file("cuentas " + QDate::currentDate().toString("yyyy-MM-dd") + ", " + QTime::currentTime().toString("hh:mm:ss")+".txt");
+    QFile file("cuentas " + QDate::currentDate().toString("yyyy-MM-dd") + ", " + QTime::currentTime().toString("hh'h'mm'm'ss's'")+".txt");
     if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QTextStream out(&file);
@@ -310,5 +314,21 @@ bool MainWindow::saveBill()
 
         return true;
     }
-    else return false;
+    else 
+	{
+		QMessageBox::warning(0,trUtf8("Error guardando las cuentas"), trUtf8("No se han podido guardar las cuentas."));
+		return false;
+	}
+}
+
+bool MainWindow::saveAndRemoveBill()
+{
+	if (saveBill())
+	{
+		QSqlQuery query;
+		query.exec("DELETE FROM ticket WHERE payed>='" + startBillDate.toString("yyyy-MM-dd") + "' AND payed<='" + endBillDate.toString("yyyy-MM-dd") + "';");
+		getTickets();
+		return true;
+	}
+	else return false;
 }

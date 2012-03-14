@@ -4,6 +4,7 @@
 #include "configuration.h"
 #include <qmainwindow.h>
 #include <QtSql/qsqldatabase.h>
+#include <qdatetime.h>
 
 namespace Ui {
     class MainWindow;
@@ -28,6 +29,7 @@ private slots:
     bool calculeBill();
     void on_actionAddBuddy_triggered();
     bool saveBill();
+	bool saveAndRemoveBill();
 
     void on_actionConfigurar_BBDD_triggered();
 
@@ -35,6 +37,8 @@ private:
     Ui::MainWindow *ui;
     QSqlDatabase *db;
     bool isDatabaseInitialized;
+	QDate startBillDate;
+	QDate endBillDate;
 
     bool connectDB();
     bool closeDB();

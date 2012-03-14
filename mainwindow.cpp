@@ -242,14 +242,14 @@ bool MainWindow::calculeBill()
                      ", ambos incluidos.\n\n");
     QMap<QString, float>::iterator it;
     for (it = bill.begin(); it != bill.end(); ++it)
-        if (it.value()<0) billText = billText + it.key() + QString(" debe ") + QString::number(abs(it.value())) + QString(trUtf8("€ \n"));
-        else billText = billText + it.key() + QString(" recibe ") + QString::number(abs(it.value())) + QString(trUtf8("€ \n"));
+        if (it.value()<0) billText = billText + it.key() + QString(" debe ") + QString::number(-it.value()) + QString(trUtf8("€ \n"));
+        else billText = billText + it.key() + QString(" recibe ") + QString::number(it.value()) + QString(trUtf8("€ \n"));
 
-    billText = billText + "\n\n" + ticketsDetail;
+    billText = billText + "\n" + ticketsDetail;
 
     ui->billTextBox->setText(billText);
     ui->saveButton->setEnabled(true);
-	ui->saveAndRemoveButton->setEnabled(true);
+    ui->saveAndRemoveButton->setEnabled(true);
 
     return true;
 }
@@ -282,11 +282,18 @@ void MainWindow::on_actionConfigurar_BBDD_triggered()
     DatabaseDialog dd(this->config, this);
     int result = dd.exec();
 
+    //open new connection (accepted or rejected we have to do that, as we lost previous one)
     delete config;
     config = new Configuration();
 
     if(connectDB()) getTickets();
 
+    if (result==QDialog::Accepted)
+    {
+        ui->billTextBox->setText("");
+        ui->saveButton->setDisabled(true);
+        ui->saveAndRemoveButton->setDisabled(true);
+    }
 }
 
 bool MainWindow::closeDB()
@@ -315,8 +322,8 @@ bool MainWindow::saveBill()
     }
     else 
 	{
-		QMessageBox::warning(0,trUtf8("Error guardando las cuentas"), trUtf8("No se han podido guardar las cuentas."));
-		return false;
+            QMessageBox::warning(0,trUtf8("Error guardando las cuentas"), trUtf8("No se han podido guardar las cuentas."));
+            return false;
 	}
 }
 
@@ -329,7 +336,13 @@ bool MainWindow::saveAndRemoveBill()
         if (connectDB())
         {
             valid = query.exec("DELETE FROM ticket WHERE payed>='" + startBillDate.toString("yyyy-MM-dd") + "' AND payed<='" + endBillDate.toString("yyyy-MM-dd") + "';");
-            if (valid) getTickets();
+            getTickets();
+            if (valid)
+            {
+                ui->billTextBox->setText("");
+                ui->saveButton->setDisabled(true);
+                ui->saveAndRemoveButton->setDisabled(true);
+            }
             return valid;
         }
         else return false;

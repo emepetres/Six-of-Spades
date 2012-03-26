@@ -41,43 +41,69 @@ bool MainWindow::connectDB()
         else closeDB();
     }
 
-    db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
-    isDatabaseInitialized = true;
+    QSqlQueryModel *table;
+    QSqlQuery *query;
+    bool validQuery = true;
 
-    db->setHostName(config->hostName());
-    db->setDatabaseName(config->databaseName());
-    db->setUserName(config->userName());
-    db->setPassword(config->password());
-
-    if (!db->open())
+    if (config->isLocal()) //local database
     {
-		QMessageBox::warning(0,trUtf8("Error de conexión"), trUtf8("Vaya a \"Herramientas\"->\"Configurar BBDD\" e introduzca los datos de conexión válidos."));
-        return false;
-    }
+        db = new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE"));
+        db->setDatabaseName("local.sqlite");
 
-    //writes database if it is empty
-    QSqlQueryModel *table = new QSqlQueryModel;
-    table->setQuery("show tables;");
-    if (table->rowCount()==0) {
-        QSqlQuery query;
-        bool validQuery;
+        if (!db->open()) { QMessageBox::critical(0,trUtf8("Error de conexión local"), db->lastError().text()); return false; }
 
-        //user table
-        validQuery = query.exec ("CREATE TABLE `user` (`user` VARCHAR(40) NOT NULL,`passwd` VARCHAR(40), PRIMARY KEY (`user`)) ENGINE = InnoDB;");
-
-        //ticket table
-        validQuery = validQuery && query.exec ("CREATE TABLE `ticket` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,`concept` VARCHAR(256) NOT NULL,`created` DATE  NOT NULL,`payed` DATE ,`amount` FLOAT  NOT NULL DEFAULT 0,`user` VARCHAR(40) NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `user_ticket` FOREIGN KEY `user` (`user`) REFERENCES `user` (`user`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;");
-
-        //ticket_user table
-        validQuery = validQuery && query.exec ("CREATE TABLE `ticket_user` (`idTicket` INT UNSIGNED NOT NULL, `user` VARCHAR(40) NOT NULL,`percent` FLOAT UNSIGNED NOT NULL, PRIMARY KEY (`idTicket`, `user`), CONSTRAINT `ticket` FOREIGN KEY `ticket` (`idTicket`) REFERENCES `ticket` (`id`) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT `user` FOREIGN KEY `user` (`user`) REFERENCES `user` (`user`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;");
-        if (!validQuery)
+        //writes database if it is empty
+        query = new QSqlQuery;
+        table = new QSqlQueryModel;
+        table->setQuery("SELECT name FROM sqlite_master WHERE type='table';");
+        if (table->rowCount()==0)
         {
-            QMessageBox::critical(0,"Database error",  query.lastError().text());
-            return false;
+            //user table
+            validQuery = query->exec ("CREATE TABLE user (user VARCHAR(40) NOT NULL PRIMARY KEY, passwd VARCHAR(40));");
+
+            //ticket table
+            validQuery = validQuery && query->exec ("CREATE TABLE ticket (id INTEGER PRIMARY KEY AUTOINCREMENT, concept VARCHAR(256) NOT NULL, created DATE  NOT NULL,payed DATE ,amount FLOAT  NOT NULL DEFAULT 0,user VARCHAR(40) NOT NULL, FOREIGN KEY(user) REFERENCES user (user) ON DELETE CASCADE ON UPDATE CASCADE);");
+
+            //ticket_user table
+            validQuery = validQuery && query->exec ("CREATE TABLE ticket_user (idTicket INTEGER NOT NULL, user VARCHAR(40) NOT NULL, percent FLOAT UNSIGNED NOT NULL, FOREIGN KEY(idTicket) REFERENCES ticket (id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (user) REFERENCES user (user) ON DELETE CASCADE ON UPDATE CASCADE, PRIMARY KEY(idTicket, user));");
         }
     }
+    else
+    {
+        db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
+        db->setHostName(config->hostName());
+        db->setDatabaseName(config->databaseName());
+        db->setUserName(config->userName());
+        db->setPassword(config->password());
 
+        if (!db->open()) { QMessageBox::warning(0,trUtf8("Error de conexión"), trUtf8("Vaya a \"Herramientas\"->\"Configurar BBDD\" e introduzca los datos de conexión válidos.")); return false; }
 
+        //writes database if it is empty
+        query = new QSqlQuery;
+        table = new QSqlQueryModel;
+        table->setQuery("show tables;");
+        if (table->rowCount()==0)
+        {
+            //user table
+            validQuery = query->exec ("CREATE TABLE `user` (`user` VARCHAR(40) NOT NULL,`passwd` VARCHAR(40), PRIMARY KEY (`user`)) ENGINE = InnoDB;");
+
+            //ticket table
+            validQuery = validQuery && query->exec ("CREATE TABLE `ticket` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,`concept` VARCHAR(256) NOT NULL,`created` DATE  NOT NULL,`payed` DATE ,`amount` FLOAT  NOT NULL DEFAULT 0,`user` VARCHAR(40) NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `user_ticket` FOREIGN KEY `user` (`user`) REFERENCES `user` (`user`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;");
+
+            //ticket_user table
+            validQuery = validQuery && query->exec ("CREATE TABLE `ticket_user` (`idTicket` INT UNSIGNED NOT NULL, `user` VARCHAR(40) NOT NULL,`percent` FLOAT UNSIGNED NOT NULL, PRIMARY KEY (`idTicket`, `user`), CONSTRAINT `ticket` FOREIGN KEY `ticket` (`idTicket`) REFERENCES `ticket` (`id`) ON DELETE CASCADE ON UPDATE CASCADE, CONSTRAINT `user` FOREIGN KEY `user` (`user`) REFERENCES `user` (`user`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;");
+        }
+    }
+    isDatabaseInitialized = true;
+    delete table;
+
+    if (!validQuery)
+    {
+        QMessageBox::critical(0,"Database error",  query->lastError().text());
+        delete query;
+        return false;
+    }
+    delete query;
 
     return true;
 }

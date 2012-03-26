@@ -1,6 +1,7 @@
 #ifndef TICKETDIALOG_H
 #define TICKETDIALOG_H
 
+#include "configuration.h"
 #include <qdialog.h>
 #include <QtSql/qsqlquerymodel.h>
 #include <qitemselectionmodel.h>
@@ -37,6 +38,7 @@ private:
     Ui::TicketDialog *ui;
     bool organizeDialog(QSqlQueryModel *userModel);
     QString writeTicket();
+    QString updateTicket();
 
 };
 

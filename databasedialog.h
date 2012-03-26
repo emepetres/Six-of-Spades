@@ -18,6 +18,7 @@ public:
 
 public slots:
     bool saveProperties();
+    bool setFields();
 
 private:
     Ui::DatabaseDialog *ui;

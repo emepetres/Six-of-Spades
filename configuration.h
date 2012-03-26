@@ -15,13 +15,14 @@ private:
     QString _databaseName;
     QString _userName;
     QString _password;
+    bool _local;
 
     bool closed;
 
 public:
     QSqlDatabase *db;
 
-    Configuration(QString hostName, QString databaseName, QString userName, QString password);
+    //Configuration(QString hostName, QString databaseName, QString userName, QString password);
     Configuration();
 
     bool OpenConfigDatabase();
@@ -32,6 +33,7 @@ public:
     QString databaseName() { return _databaseName; }
     QString userName() { return _userName; }
     QString password() { return _password; }
+    bool isLocal() { return _local; }
 };
 
 #endif // CONFIGURATION_H

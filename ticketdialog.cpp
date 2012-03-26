@@ -1,6 +1,6 @@
-#include <qobject.h>
 #include "ticketdialog.h"
 #include "ui_ticketdialog.h"
+#include <qobject.h>
 #include <qgridlayout.h>
 #include <qsqlrecord.h>
 #include <qsqlquery.h>
@@ -189,66 +189,16 @@ bool TicketDialog::addTicket()
         }
         else
         {
-            bool isnumber, validQuery;
-            QString cost = ui->costLineEdit->text();
-
-            //check that all number fields have numbers (cost and percentages)
-            cost.toFloat(&isnumber);
-            if (!isnumber) { ui->errorLabel->setText(trUtf8("Error: El coste no es un numero valido.")); return false; }
-
-            float percent;
-            for (int i=0; i<usersNumber && isnumber; i++) {
-                if (usersCheckBoxes[i]->isChecked() && percentages[i]->text().compare("igual")!=0)
-                {
-                    percent = percentages[i]->text().toFloat(&isnumber);
-                    isnumber = isnumber && percent > 0 && percent < 100;
-                    if (!isnumber) { ui->errorLabel->setText("El porcentaje " + QString::number(i+1) + trUtf8(" no es válido")); return false; }
-                }
-            }
-
-            //update ticket with the information
-            QString user = ui->comboBox->currentText();
-            QString concept = ui->conceptLineEdit->text();
-            QDate emission_date = ui->dateEdit->date();
-            QSqlQuery query;
-            validQuery = query.exec ("update ticket set concept='" + concept +
-                                     "', created='" + QDate::currentDate().toString("yyyy-MM-dd") +
-                                     "', payed='" + emission_date.toString("yyyy-MM-dd") +
-                                     "', amount=" + cost +
-                                     ", user='" + user +
-                                     "' where id=" + QString::number(id) +";");
-
-            QString jorl = "update ticket set concept='" + concept +
-                    "', created='" + QDate::currentDate().toString("yyyy-MM-dd") +
-                    "', payed='" + emission_date.toString("yyyy-MM-dd") +
-                    "', amount=" + cost +
-                    ", user='" + user +
-                    "' where id=" + QString::number(id) +";";
-            qDebug() << jorl;
-
-            if (!validQuery) { ui->errorLabel->setText("Error actualizando el ticket."); return false; }
-
-
-            //update the contributors of the ticket (remove olds and add the new ones)
-            query.exec("delete from ticket_user where idTicket="+QString::number(id)+";");
-            QString percentage;
-            for (int i=0; i<usersNumber && validQuery; i++) {
-                if (usersCheckBoxes[i]->isChecked()) {
-                    if (percentages[i]->text().compare("igual")==0) percentage = "0";
-                    else percentage = percentages[i]->text();
-
-                    validQuery = validQuery && query.exec ("insert into ticket_user (idTicket, user, percent) VALUES ("+
-                                                   QString::number(id) + ", '"+
-                                                   usersCheckBoxes[i]->text() + "', " +
-                                                   percentage +");");
-                }
-            }
-
-            if (!validQuery) { ui->errorLabel->setText(trUtf8("Error actualizando el ticket, por favor, inténtelo otra vez.")); return false; }
-            else
+            QString updated = updateTicket();
+            if (updated.compare("")==0)
             {
                 QDialog::accept();
                 return true;
+            }
+            else
+            {
+                ui->errorLabel->setText(updated);
+                return false;
             }
         }
     }
@@ -282,7 +232,7 @@ QString TicketDialog::writeTicket()
 
     //check that all number fields have numbers (cost and percentages)
     cost.toFloat(&isnumber);
-    if (!isnumber) return "Error: El coste no es un numero valido.";
+    if (!isnumber) return trUtf8("Error: El coste no es un numero válido.");
 
     float percent;
     for (int i=0; i<usersNumber && isnumber; i++) {
@@ -300,27 +250,31 @@ QString TicketDialog::writeTicket()
     QString concept = ui->conceptLineEdit->text();
     QDate emission_date = ui->dateEdit->date();
     QSqlQuery query;
+
     validQuery = query.exec ("insert into ticket (concept, created, payed, amount, user) VALUES ('"+
-                         concept +"', '"+
-                         QDate::currentDate().toString("yyyy-MM-dd") +"', '"+
-                         emission_date.toString("yyyy-MM-dd") +"', "+
-                         cost +", '"+
-                         user +"');");
-    if (!validQuery) return "Datos de ticket no válidos.";
+                             concept +"', '"+
+                             QDate::currentDate().toString("yyyy-MM-dd") +"', '"+
+                             emission_date.toString("yyyy-MM-dd") +"', "+
+                             cost +", '"+
+                             user +"');");
+
+    if (!validQuery) return trUtf8("Datos de ticket no válidos.")+query.lastError().text();
     int ticketId = query.lastInsertId().toInt();
 
 
     //write the contributors of the ticket
     QString percentage;
-    for (int i=0; i<usersNumber && validQuery; i++) {
-        if (usersCheckBoxes[i]->isChecked()) {
+    for (int i=0; i<usersNumber && validQuery; i++)
+    {
+        if (usersCheckBoxes[i]->isChecked())
+        {
             if (percentages[i]->text().compare("igual")==0) percentage = "0";
             else percentage = percentages[i]->text();
 
             validQuery = validQuery && query.exec ("insert into ticket_user (idTicket, user, percent) VALUES ("+
-                                           QString::number(ticketId) + ", '"+
-                                           usersCheckBoxes[i]->text() + "', " +
-                                           percentage +");");
+                                                   QString::number(ticketId) + ", '"+
+                                                   usersCheckBoxes[i]->text() + "', " +
+                                                   percentage +");");
         }
     }
 
@@ -331,4 +285,57 @@ QString TicketDialog::writeTicket()
     }
     else return "";
 
+}
+
+QString TicketDialog::updateTicket()
+{
+    bool isnumber, validQuery;
+    QString cost = ui->costLineEdit->text();
+
+    //check that all number fields have numbers (cost and percentages)
+    cost.toFloat(&isnumber);
+    if (!isnumber) { ui->errorLabel->setText(trUtf8("Error: El coste no es un numero valido.")); return false; }
+
+    float percent;
+    for (int i=0; i<usersNumber && isnumber; i++) {
+        if (usersCheckBoxes[i]->isChecked() && percentages[i]->text().compare("igual")!=0)
+        {
+            percent = percentages[i]->text().toFloat(&isnumber);
+            isnumber = isnumber && percent > 0 && percent < 100;
+            if (!isnumber) { ui->errorLabel->setText("El porcentaje " + QString::number(i+1) + trUtf8(" no es válido")); return false; }
+        }
+    }
+
+    //update ticket with the information
+    QString user = ui->comboBox->currentText();
+    QString concept = ui->conceptLineEdit->text();
+    QDate emission_date = ui->dateEdit->date();
+    QSqlQuery query;
+    validQuery = query.exec ("update ticket set concept='" + concept +
+                             "', created='" + QDate::currentDate().toString("yyyy-MM-dd") +
+                             "', payed='" + emission_date.toString("yyyy-MM-dd") +
+                             "', amount=" + cost +
+                             ", user='" + user +
+                             "' where id=" + QString::number(id) +";");
+
+    if (!validQuery) return trUtf8("Datos nuevos no válidos.");
+
+    //update the contributors of the ticket (remove olds and add the new ones)
+    query.exec("delete from ticket_user where idTicket="+QString::number(id)+";");
+    QString percentage;
+    for (int i=0; i<usersNumber && validQuery; i++) {
+        if (usersCheckBoxes[i]->isChecked()) {
+            if (percentages[i]->text().compare("igual")==0) percentage = "0";
+            else percentage = percentages[i]->text();
+
+            validQuery = validQuery && query.exec ("insert into ticket_user (idTicket, user, percent) VALUES ("+
+                                                   QString::number(id) + ", '"+
+                                                   usersCheckBoxes[i]->text() + "', " +
+                                                   percentage +");");
+        }
+    }
+
+    if (!validQuery) return trUtf8("Datos de compañer@s no actualizados correctamente.");
+
+    return "";
 }

@@ -6,7 +6,7 @@ About::About(QWidget *parent) :
     ui(new Ui::About)
 {
     ui->setupUi(this);
-    ui->titleVersion->setText(trUtf8("Seis de Picas - Versión 0.3.14"));
+    ui->titleVersion->setText(trUtf8("Seis de Picas - Versión 0.3.28"));
 }
 
 About::~About()

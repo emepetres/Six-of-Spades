@@ -95,6 +95,8 @@ TicketDialog::~TicketDialog()
 
 bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
 {
+    ui->percentageCheckBox->setDisabled(true);
+
     ui->comboBox->setModel(userModel);
     ui->comboBox->setModelColumn(0);
     ui->dateEdit->setDate(QDate::currentDate());

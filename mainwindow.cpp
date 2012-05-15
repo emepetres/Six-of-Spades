@@ -113,7 +113,7 @@ bool MainWindow::getTickets()
     if (connectDB())
     {
         QSqlQueryModel *ticketsTableModel = new QSqlQueryModel;
-        ticketsTableModel->setQuery("SELECT id, payed, user, concept, amount, created FROM ticket LIMIT 0,50;");
+        ticketsTableModel->setQuery("SELECT id, payed, user, concept, amount, created FROM ticket ORDER BY id DESC;");
 
         ticketsTableModel->setHeaderData(0, Qt::Horizontal, "ID");
         ticketsTableModel->setHeaderData(1, Qt::Horizontal, "Pagado el");

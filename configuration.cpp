@@ -5,16 +5,6 @@
 #include <QtSql/qsqldatabase.h>
 #include <qmessagebox.h>
 
-/*Configuration::Configuration(QString hostName, QString databaseName, QString userName, QString password)
-{
-
-    this->_hostName = hostName;
-    this->_databaseName = databaseName;
-    this->_userName = userName;
-    this->_password = password;
-
-}*/
-
 bool Configuration::OpenConfigDatabase()
 {
     if (closed)

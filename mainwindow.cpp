@@ -367,8 +367,9 @@ bool MainWindow::saveBill()
 
 bool MainWindow::saveAndRemoveBill()
 {
-    int res = QMessageBox::question(0,trUtf8("Información"), trUtf8("Esta operación borrara todos los tickets, por lo que no se podrá modificar estas cuentas una vez aceptada la operación.\n¿Desea usted continuar?"));
-    if (saveBill())
+    int res = QMessageBox::question(0,trUtf8("Información"), trUtf8("Esta operación borrara todos los tickets, por lo que no se podrá modificar estas cuentas una vez aceptada la operación.\n¿Desea usted continuar?"),
+                                    QMessageBox::Ok,QMessageBox::Cancel);
+    if (res==QMessageBox::Ok && saveBill())
     {
         QSqlQuery query;
         bool valid;

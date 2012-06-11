@@ -262,6 +262,13 @@ QString TicketDialog::writeTicket()
     cost.toFloat(&isnumber);
     if (!isnumber) return trUtf8("Error: El coste no es un numero válido.");
 
+    bool anyChecked = false;
+    for (int i=0; i<usersNumber; i++)
+    {
+        if (usersCheckBoxes[i]->isChecked()) { anyChecked = true; break; }
+    }
+    if (!anyChecked) { return trUtf8("Debe involucrar a algún usuario."); }
+
     float percent;
     int total_percentage = 0;
     bool automatic = false;
@@ -282,14 +289,6 @@ QString TicketDialog::writeTicket()
     {
         if (total_percentage >= 100) return "La suma de porcentages supera el 100%.";
     } else if (total_percentage != 100) return "La suma de porcentages debe ser 100.";
-
-    bool anyChecked = false;
-    for (int i=0; i<usersNumber; i++)
-    {
-        if (usersCheckBoxes[i]->isChecked()) { anyChecked = true; break; }
-    }
-    if (!anyChecked) { return trUtf8("Debe involucrar a algún usuario."); }
-
 
     //write the ticket
     QString user = ui->comboBox->currentText();
@@ -343,6 +342,13 @@ QString TicketDialog::updateTicket()
     cost.toFloat(&isnumber);
     if (!isnumber) { return trUtf8("Error: El coste no es un numero valido."); }
 
+    bool anyChecked = false;
+    for (int i=0; i<usersNumber; i++)
+    {
+        if (usersCheckBoxes[i]->isChecked()) { anyChecked = true; break; }
+    }
+    if (!anyChecked) { trUtf8("Debe involucrar a algún usuario."); }
+
     float percent;
     int total_percentage = 0;
     bool automatic = false;
@@ -363,13 +369,6 @@ QString TicketDialog::updateTicket()
     {
         if (total_percentage >= 100) return "La suma de porcentages supera el 100%.";
     } else if (total_percentage != 100) return "La suma de porcentages debe ser 100.";
-
-    bool anyChecked = false;
-    for (int i=0; i<usersNumber; i++)
-    {
-        if (usersCheckBoxes[i]->isChecked()) { anyChecked = true; break; }
-    }
-    if (!anyChecked) { trUtf8("Debe involucrar a algún usuario."); }
 
     //update ticket with the information
     QString user = ui->comboBox->currentText();

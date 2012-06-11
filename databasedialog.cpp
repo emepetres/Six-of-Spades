@@ -14,6 +14,7 @@ DatabaseDialog::DatabaseDialog(Configuration *config, QWidget *parent) :
     ui->databaseEdit->setText(config->databaseName());
     ui->userEdit->setText(config->userName());
     ui->passwordEdit->setText(config->password());
+    ui->passwordEdit->setEchoMode(QLineEdit::Password);
     setFields();
 
     this->connect(ui->saveButton, SIGNAL(clicked()), SLOT(saveProperties()));

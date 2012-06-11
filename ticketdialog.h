@@ -7,6 +7,7 @@
 #include <qitemselectionmodel.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
+#include <qlabel.h>
 
 using namespace std;
 
@@ -26,10 +27,12 @@ public:
 public slots:
     bool addTicket();
     bool addMoreTickets();
+    bool changeContribution();
 
 private:
     vector<QCheckBox *> usersCheckBoxes;
-    vector<QLineEdit *> percentages;
+    vector<QLineEdit *> userTicketData;
+    vector<QLabel *> userTicketLabel;
     int usersNumber;
     bool editDialog; //to know if we are adding a new ticket, or viewing/editing one
     bool isEditing; //if we are in edit mode

@@ -174,7 +174,7 @@
     </widget>
    </item>
    <item row="3" column="2" colspan="2">
-    <widget class="QCheckBox" name="percentageCheckBox">
+    <widget class="QCheckBox" name="contributionCheckBox">
      <property name="text">
       <string>Igual contribución</string>
      </property>
@@ -191,8 +191,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>223</x>
-     <y>172</y>
+     <x>232</x>
+     <y>167</y>
     </hint>
     <hint type="destinationlabel">
      <x>43</x>
@@ -207,8 +207,8 @@
    <slot>addTicket()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>314</x>
-     <y>172</y>
+     <x>323</x>
+     <y>167</y>
     </hint>
     <hint type="destinationlabel">
      <x>155</x>
@@ -224,7 +224,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>421</x>
-     <y>172</y>
+     <y>167</y>
     </hint>
     <hint type="destinationlabel">
      <x>330</x>
@@ -232,9 +232,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>contributionCheckBox</sender>
+   <signal>clicked()</signal>
+   <receiver>TicketDialog</receiver>
+   <slot>changeContribution()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>374</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>427</x>
+     <y>105</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addTicket()</slot>
   <slot>addMoreTickets()</slot>
+  <slot>changeContribution()</slot>
  </slots>
 </ui>

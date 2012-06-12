@@ -5,6 +5,7 @@
 #include <qsqlrecord.h>
 #include <qsqlquery.h>
 #include <QDebug>
+#include <mainwindow.h>
 
 TicketDialog::TicketDialog(QSqlQueryModel *userModel, QWidget *parent) :
     QDialog(parent),
@@ -238,6 +239,7 @@ bool TicketDialog::addMoreTickets()
 
     if (written.compare("")==0)
     {
+        ((MainWindow*)parent())->getTickets();
         ui->errorLabel->setText("");
         ui->conceptLineEdit->setText("");
         ui->costLineEdit->setText("");

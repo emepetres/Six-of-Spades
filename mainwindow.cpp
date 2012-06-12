@@ -18,6 +18,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     isDatabaseInitialized = false;
     ui->setupUi(this);
+
+    //write the TicketsView
+    //ticketsView = new TicketsView();
+    /*QTableView *list = new QTableView(0);
+    list->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QGridLayout *gridLayout = (QGridLayout *)layout();
+    gridLayout->addWidget(list, 1, 0, Qt::AlignLeft);*/
+
     setHelp();
 
     //organize the window
@@ -33,6 +41,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete config;
     delete db;
+    //delete ticketsView;
 }
 
 bool MainWindow::connectDB()
@@ -125,10 +134,19 @@ bool MainWindow::getTickets()
         ticketsTableModel->setHeaderData(5, Qt::Horizontal, "Modificado el");
 
         ui->ticketsTable->setModel(ticketsTableModel);
-        ui->ticketsTable->resizeColumnsToContents();
-        int ticketsTableWidth = 672; //ui->ticketsTable->geometry().width();
-        ui->ticketsTable->setColumnWidth(3, ticketsTableWidth - ui->ticketsTable->columnWidth(0) - ui->ticketsTable->columnWidth(1) - ui->ticketsTable->columnWidth(2) - ui->ticketsTable->columnWidth(4) - ui->ticketsTable->columnWidth(5) -15);
         ui->ticketsTable->setAlternatingRowColors(true);
+
+        //logic to resize colums
+        ui->ticketsTable->resizeColumnsToContents();
+        int ticketsTableWidth = ui->ticketsTable->width();
+        if (ticketsTableWidth!=100) //widget already painted
+        {
+            int not_concept_width = ui->ticketsTable->horizontalHeader()->length() - ui->ticketsTable->columnWidth(3);
+            ui->ticketsTable->setColumnWidth(3, ticketsTableWidth - not_concept_width);
+        }
+
+        //ui->ticketsTable->horizontalHeader()->width()->setResizeMode(QHeaderView::Stretch);
+        //ui->ticketsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
         enableButtons(); //enable/disable buttons if there is some ticket selected or not
 
@@ -269,7 +287,7 @@ bool MainWindow::calculeBill()
         }
 
         //write bill text
-        QString billText("Cuentas de piso calculadas el " + QDate::currentDate().toString("dd-MM-yyyy") +
+        QString billText("Cuentas comunes calculadas el " + QDate::currentDate().toString("dd-MM-yyyy") +
                          " a las " + QTime::currentTime().toString("hh:mm:ss") +
                          trUtf8(", desde el día ")+ ui->startTicketDate->date().toString("dd-MM-yyyy") +
                          trUtf8(" hasta el día ")+ ui->endTicketDate->date().toString("dd-MM-yyyy")+

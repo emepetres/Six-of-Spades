@@ -5,6 +5,7 @@
 #include <qmainwindow.h>
 #include <QtSql/qsqldatabase.h>
 #include <qdatetime.h>
+//#include "ticketsview.h"
 
 namespace Ui {
     class MainWindow;
@@ -43,6 +44,7 @@ private:
     bool isDatabaseInitialized;
 	QDate startBillDate;
 	QDate endBillDate;
+    //TicketsView *ticketsView;
 
     bool connectDB();
     bool closeDB();

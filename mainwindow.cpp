@@ -419,6 +419,6 @@ void MainWindow::on_actionSobre_Seis_De_Picas_triggered()
 
 void MainWindow::setHelp()
 {
-    QString help = "<h1>Seis de picas</h1>";
+    QString help = trUtf8("<p>Gestiona las cuentas compartidas fácilmente.</p>");
     ui->billTextBox->setText(help);
 }

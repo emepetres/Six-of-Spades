@@ -31,11 +31,11 @@ private slots:
     bool saveBill();
 	bool saveAndRemoveBill();
 
-    void on_actionConfigurar_BBDD_triggered();
-
     void on_actionSobre_Seis_De_Picas_triggered();
 
     void on_actionAbrir_triggered();
+
+    void on_actionAbrir_remoto_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -47,6 +47,7 @@ private:
     bool connectDB();
     bool closeDB();
     void changeDataBase(bool local);
+    void setHelp();
 };
 
 #endif // MAINWINDOW_H

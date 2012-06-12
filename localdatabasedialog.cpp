@@ -21,7 +21,8 @@ localdatabasedialog::~localdatabasedialog()
 bool localdatabasedialog::searchFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, trUtf8("Buscar archivo"),
-                                                     "/home");
+                                                     "",
+                                                    trUtf8("Six-of-Spades (*.sos)"));
     ui->filePathText->setText(fileName);
 
     return true;

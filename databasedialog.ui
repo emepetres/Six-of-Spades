@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>323</width>
-    <height>182</height>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label">
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
@@ -27,10 +27,10 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="3">
+   <item row="2" column="1" colspan="3">
     <widget class="QLineEdit" name="hostEdit"/>
    </item>
-   <item row="4" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Base de Datos: </string>
@@ -40,10 +40,10 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1" colspan="3">
+   <item row="3" column="1" colspan="3">
     <widget class="QLineEdit" name="databaseEdit"/>
    </item>
-   <item row="5" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Usuario: </string>
@@ -53,10 +53,10 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1" colspan="3">
+   <item row="4" column="1" colspan="3">
     <widget class="QLineEdit" name="userEdit"/>
    </item>
-   <item row="6" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
       <string>Contraseña: </string>
@@ -66,51 +66,27 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="1" colspan="3">
+   <item row="5" column="1" colspan="3">
     <widget class="QLineEdit" name="passwordEdit"/>
    </item>
-   <item row="7" column="3">
+   <item row="6" column="3">
     <widget class="QPushButton" name="saveButton">
      <property name="text">
-      <string>Guardar</string>
+      <string>Abrir</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="2">
+   <item row="6" column="2">
     <widget class="QPushButton" name="cancelButton">
      <property name="text">
       <string>Cancelar</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3">
-    <widget class="QCheckBox" name="localCheckBox">
-     <property name="text">
-      <string>Usar base de datos local</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>localCheckBox</sender>
-   <signal>clicked()</signal>
-   <receiver>DatabaseDialog</receiver>
-   <slot>setFields()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>19</x>
-     <y>18</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>9</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>setFields()</slot>
  </slots>

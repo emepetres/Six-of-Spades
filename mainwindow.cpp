@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     isDatabaseInitialized = false;
     ui->setupUi(this);
+    setHelp();
 
     //organize the window
     ui->endTicketDate->setDate(QDate::currentDate());
@@ -358,7 +359,7 @@ bool MainWindow::saveAndRemoveBill()
             getTickets();
             if (valid)
             {
-                ui->billTextBox->setText("");
+                setHelp();
                 ui->saveButton->setDisabled(true);
                 ui->saveAndRemoveButton->setDisabled(true);
             }
@@ -394,7 +395,7 @@ void MainWindow::changeDataBase(bool local)
 
     if (result==QDialog::Accepted)
     {
-        ui->billTextBox->setText("");
+        setHelp();
         ui->saveButton->setDisabled(true);
         ui->saveAndRemoveButton->setDisabled(true);
     }
@@ -405,7 +406,7 @@ void MainWindow::on_actionAbrir_triggered()
     changeDataBase(true);
 }
 
-void MainWindow::on_actionConfigurar_BBDD_triggered()
+void MainWindow::on_actionAbrir_remoto_triggered()
 {
     changeDataBase(false);
 }
@@ -414,4 +415,10 @@ void MainWindow::on_actionSobre_Seis_De_Picas_triggered()
 {
     About ab;
     ab.exec();
+}
+
+void MainWindow::setHelp()
+{
+    QString help = "<h1>Seis de picas</h1>";
+    ui->billTextBox->setText(help);
 }

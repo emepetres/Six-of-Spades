@@ -32,7 +32,7 @@ Si no existe, se creará una nueva.</string>
    <item row="4" column="2">
     <widget class="QPushButton" name="acceptButton">
      <property name="text">
-      <string>Aceptar</string>
+      <string>Abrir</string>
      </property>
     </widget>
    </item>

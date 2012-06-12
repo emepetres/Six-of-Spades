@@ -180,7 +180,6 @@
      <string>Herramientas</string>
     </property>
     <addaction name="actionAddBuddy"/>
-    <addaction name="actionConfigurar_BBDD"/>
    </widget>
    <widget class="QMenu" name="menuAyuda">
     <property name="title">
@@ -211,11 +210,6 @@
   <action name="actionAddBuddy">
    <property name="text">
     <string>Añadir/Borrar compañer@</string>
-   </property>
-  </action>
-  <action name="actionConfigurar_BBDD">
-   <property name="text">
-    <string>Configurar BBDD</string>
    </property>
   </action>
   <action name="actionSobre_Seis_De_Picas">

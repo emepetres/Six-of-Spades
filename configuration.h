@@ -16,6 +16,7 @@ private:
     QString _userName;
     QString _password;
     bool _local;
+    QString _local_name;
 
     bool closed;
 
@@ -34,6 +35,7 @@ public:
     QString userName() { return _userName; }
     QString password() { return _password; }
     bool isLocal() { return _local; }
+    QString localName() { return _local_name; }
 };
 
 #endif // CONFIGURATION_H

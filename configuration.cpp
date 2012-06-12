@@ -36,6 +36,8 @@ bool Configuration::OpenConfigDatabase()
             if (table->rowCount()==0) { query.exec("insert into properties (property, value) values ('password', '-');"); }
             table->setQuery("select value from properties where property='local'");
             if (table->rowCount()==0) { query.exec("insert into properties (property, value) values ('local', '1');"); }
+            table->setQuery("select value from properties where property='local_name'");
+            if (table->rowCount()==0) { query.exec("insert into properties (property, value) values ('local_name', 'local.sos');"); }
 
             //read properties
             query.exec("select value from properties where property='hostName';");
@@ -48,6 +50,8 @@ bool Configuration::OpenConfigDatabase()
             query.next(); _password = query.value(0).toString();
             query.exec("select value from properties where property='local';");
             query.next(); _local = query.value(0).toInt();
+            query.exec("select value from properties where property='local_name';");
+            query.next(); _local_name = query.value(0).toString();
 
             query.clear();
             table->clear();

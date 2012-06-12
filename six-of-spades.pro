@@ -17,19 +17,22 @@ SOURCES += main.cpp\
     userdialog.cpp \
     configuration.cpp \
     databasedialog.cpp \
-    about.cpp
+    about.cpp \
+    localdatabasedialog.cpp
 
 HEADERS  += mainwindow.h \
     ticketdialog.h \
     userdialog.h \
     configuration.h \
     databasedialog.h \
-    about.h
+    about.h \
+    localdatabasedialog.h
 
 FORMS    += mainwindow.ui \
     ticketdialog.ui \
     userdialog.ui \
     databasedialog.ui \
-    about.ui
+    about.ui \
+    localdatabasedialog.ui
 
 OTHER_FILES +=

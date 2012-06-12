@@ -35,6 +35,8 @@ private slots:
 
     void on_actionSobre_Seis_De_Picas_triggered();
 
+    void on_actionAbrir_triggered();
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase *db;
@@ -44,6 +46,7 @@ private:
 
     bool connectDB();
     bool closeDB();
+    void changeDataBase(bool local);
 };
 
 #endif // MAINWINDOW_H

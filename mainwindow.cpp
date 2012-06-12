@@ -5,6 +5,7 @@
 #include "configuration.h"
 #include "databasedialog.h"
 #include "about.h"
+#include "localdatabasedialog.h"
 
 #include <qmessagebox.h>
 #include <QtSql/qsqlquery.h>
@@ -48,7 +49,7 @@ bool MainWindow::connectDB()
     if (config->isLocal()) //local database
     {
         db = new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE"));
-        db->setDatabaseName("local.sqlite");
+        db->setDatabaseName(config->localName());
 
         if (!db->open()) { QMessageBox::critical(0,trUtf8("Error de conexión local"), db->lastError().text()); return false; }
 
@@ -313,28 +314,6 @@ void MainWindow::on_actionAddBuddy_triggered()
     getTickets();
 }
 
-void MainWindow::on_actionConfigurar_BBDD_triggered()
-{
-    //remove old connection
-    closeDB();
-
-    DatabaseDialog dd(this->config, this);
-    int result = dd.exec();
-
-    //open new connection (accepted or rejected we have to do that, as we lost previous one)
-    delete config;
-    config = new Configuration();
-
-    if(connectDB()) getTickets();
-
-    if (result==QDialog::Accepted)
-    {
-        ui->billTextBox->setText("");
-        ui->saveButton->setDisabled(true);
-        ui->saveAndRemoveButton->setDisabled(true);
-    }
-}
-
 bool MainWindow::closeDB()
 {
     QString connectionName;
@@ -387,6 +366,48 @@ bool MainWindow::saveAndRemoveBill()
         }
         else return false;
     } else return false;
+}
+
+void MainWindow::changeDataBase(bool local)
+{
+    //remove old connection
+    closeDB();
+
+    int result;
+    if (local)
+    {
+        localdatabasedialog ldd(this->config, this);
+        result = ldd.exec();
+    }
+    else
+    {
+        DatabaseDialog dd(this->config, this);
+        result = dd.exec();
+    }
+
+
+    //open new connection (accepted or rejected we have to do that, as we lost previous one)
+    delete config;
+    config = new Configuration();
+
+    if(connectDB()) getTickets();
+
+    if (result==QDialog::Accepted)
+    {
+        ui->billTextBox->setText("");
+        ui->saveButton->setDisabled(true);
+        ui->saveAndRemoveButton->setDisabled(true);
+    }
+}
+
+void MainWindow::on_actionAbrir_triggered()
+{
+    changeDataBase(true);
+}
+
+void MainWindow::on_actionConfigurar_BBDD_triggered()
+{
+    changeDataBase(false);
 }
 
 void MainWindow::on_actionSobre_Seis_De_Picas_triggered()

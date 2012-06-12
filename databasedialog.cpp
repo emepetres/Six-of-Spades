@@ -39,10 +39,7 @@ bool DatabaseDialog::saveProperties()
                ui->userEdit->text() + QString("' where property='userName';"));
     query.exec(QString("update 'properties' set value='") +
                ui->passwordEdit->text() + QString("' where property='password';"));
-    query.exec(QString("update 'properties' set value='") +
-               (ui->localCheckBox->isChecked()? QString("1"):QString("0")) + QString("' where property='local';"));
-
-    QString error = query.lastError().text();
+    query.exec(QString("update 'properties' set value='0' where property='local';"));
 
     config->CloseDatabase();
 

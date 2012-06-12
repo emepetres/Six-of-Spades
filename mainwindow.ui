@@ -172,10 +172,10 @@
      <x>0</x>
      <y>0</y>
      <width>744</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuArchivo">
+   <widget class="QMenu" name="menuHerramientas">
     <property name="title">
      <string>Herramientas</string>
     </property>
@@ -188,7 +188,15 @@
     </property>
     <addaction name="actionSobre_Seis_De_Picas"/>
    </widget>
+   <widget class="QMenu" name="menuArchivo">
+    <property name="title">
+     <string>Archivo</string>
+    </property>
+    <addaction name="actionAbrir"/>
+    <addaction name="actionAbrir_remoto"/>
+   </widget>
    <addaction name="menuArchivo"/>
+   <addaction name="menuHerramientas"/>
    <addaction name="menuAyuda"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -213,6 +221,16 @@
   <action name="actionSobre_Seis_De_Picas">
    <property name="text">
     <string>Sobre Seis De Picas</string>
+   </property>
+  </action>
+  <action name="actionAbrir">
+   <property name="text">
+    <string>Abrir</string>
+   </property>
+  </action>
+  <action name="actionAbrir_remoto">
+   <property name="text">
+    <string>Abrir remoto</string>
    </property>
   </action>
  </widget>

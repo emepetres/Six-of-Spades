@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>localdatabasedialog</class>
+ <widget class="QDialog" name="localdatabasedialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>340</width>
+    <height>118</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="2">
+    <widget class="QPushButton" name="searchFileButton">
+     <property name="text">
+      <string>Buscar..</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Elija la base de datos de cuentas que desea abrir. 
+Si no existe, se creará una nueva.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QPushButton" name="acceptButton">
+     <property name="text">
+      <string>Aceptar</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="cancelButton">
+     <property name="text">
+      <string>Cancelar</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLineEdit" name="filePathText"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>searchFileButton</sender>
+   <signal>clicked()</signal>
+   <receiver>localdatabasedialog</receiver>
+   <slot>searchFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>361</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>411</x>
+     <y>55</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>localdatabasedialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>74</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>acceptButton</sender>
+   <signal>clicked()</signal>
+   <receiver>localdatabasedialog</receiver>
+   <slot>saveProperties()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>320</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>417</x>
+     <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>searchFile()</slot>
+  <slot>saveProperties()</slot>
+ </slots>
+</ui>

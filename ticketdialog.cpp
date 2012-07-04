@@ -96,6 +96,7 @@ TicketDialog::~TicketDialog()
     delete ui;
     usersCheckBoxes.clear();
     userTicketData.clear();
+    ticketLabels.clear();
 }
 
 bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
@@ -135,22 +136,28 @@ bool TicketDialog::organizeDialog(QSqlQueryModel *userModel)
         //add every user as possible ticket's parcipant
         QCheckBox *checkBox;
         QLineEdit *lineEdit;
-        QLabel *userTicketTypeLabel;
+        QLabel *label;
+
+        //info labels
+        label = new QLabel("contribuye en:");
+        gridLayout->addWidget(label, 4, 1);
+        ticketLabels.push_back(label);
+
         for (int i = 0; i < usersNumber; i++)
         {
             checkBox = new QCheckBox(userModel->record(i).value(0).toString(), this);
             checkBox->setLayoutDirection(Qt::RightToLeft);
-            gridLayout->addWidget(checkBox, i+4, 1);
+            gridLayout->addWidget(checkBox, i+5, 0);
             usersCheckBoxes.push_back(checkBox);
 
             lineEdit = new QLineEdit(trUtf8("automático"));
-            gridLayout->addWidget(lineEdit, i+4, 2);
+            gridLayout->addWidget(lineEdit, i+5, 1);
             lineEdit->setDisabled(true);
             userTicketData.push_back(lineEdit);
 
-            userTicketTypeLabel = new QLabel("%");
-            gridLayout->addWidget(userTicketTypeLabel, i+4, 3);
-            userTicketLabel.push_back(userTicketTypeLabel);
+            label = new QLabel("% aporta->");
+            gridLayout->addWidget(label, i+5, 2);
+            ticketLabels.push_back(label);
         }
 
         //finally add error label

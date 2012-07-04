@@ -51,8 +51,3 @@ bool localdatabasedialog::saveProperties()
     accept();
     return true;
 }
-
-
-
-
-

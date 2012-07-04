@@ -32,7 +32,6 @@ public slots:
 private:
     vector<QCheckBox *> usersCheckBoxes;
     vector<QLineEdit *> userTicketData;
-    vector<QLabel *> ticketLabels;
     int usersNumber;
     bool editDialog; //to know if we are adding a new ticket, or viewing/editing one
     bool isEditing; //if we are in edit mode

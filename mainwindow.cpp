@@ -87,7 +87,7 @@ bool MainWindow::connectDB()
         db->setUserName(config->userName());
         db->setPassword(config->password());
 
-        if (!db->open()) { QMessageBox::warning(0,trUtf8("Error de conexión"), trUtf8("Vaya a \"Herramientas\"->\"Configurar BBDD\" e introduzca los datos de conexión válidos.")); return false; }
+        if (!db->open()) { QMessageBox::warning(0,trUtf8("Error de conexión"), trUtf8("Vaya a \"Archivo\"->\"Abrir remoto\" e introduzca los datos de conexión válidos, o cree/abra una base de datos local en \"Archivo\"->\"Nuevo/Abrir\"")); return false; }
 
         //writes database if it is empty
         query = new QSqlQuery;
